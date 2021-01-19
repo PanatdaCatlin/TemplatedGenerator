@@ -119,7 +119,16 @@ export default function Home() {
             <label>Services</label>
             <TagsInput
               value={services}
-              onChange={(val) => setServices(val)}
+              onChange={(val) =>
+                setServices(
+                  val.reduce((collection, string) => {
+                    const splitString = string.split(", ");
+                    collection.push(...splitString);
+                    return collection;
+                  }, [])
+                )
+              }
+              // onChange={(val) => setServices(val)}
               inputProps={{ placeholder: "Add a Service" }}
             />
           </Form.Field>
