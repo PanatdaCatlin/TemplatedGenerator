@@ -23,8 +23,10 @@ jobs:
         uses: actions/setup-node@v1
       - run: npm install
       - run: NODE_ENV=production npm run build
+      - run: touch /out/.nojekyll
         env:
             CI: true
+        
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@3.6.2
