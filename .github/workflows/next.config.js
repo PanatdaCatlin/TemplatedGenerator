@@ -1,3 +1,14 @@
+const debug = process.env.NODE_ENV !== "production";
+
 module.exports = {
-  assetPrefix: "/TemplatedGenerator",
+  exportPathMap: function () {
+    // /Next-React-Components
+    return {
+      "/": { page: "/" },
+     
+    };
+  },
+  assetPrefix: !debug
+    ? "https://panatdacatlin.github.io/TemplatedGenerator/"
+    : "",
 };
