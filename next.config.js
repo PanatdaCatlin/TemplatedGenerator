@@ -9,6 +9,6 @@ module.exports = {
     };
   },
   assetPrefix: !debug
-    ? "https://panatdacatlin.github.io/TemplatedGenerator/"
+    ? "/TemplatedGenerator"
     : "",
 };
