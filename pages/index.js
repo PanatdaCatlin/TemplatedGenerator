@@ -52,15 +52,13 @@ const OutputCard = ({ text, service, index, city }) => {
 };
 
 export default function Home() {
-  const [cities, setCities] = usePersistedCities(["Seattle", "Tacoma"]);
+  const [cities, setCities] = usePersistedCities([]);
   const [services, setServices] = usePersistedServices([
-    "wash floors",
-    "clean cars",
   ]);
 
   const [output, setOutput] = useState({});
   const [template, setTemplate] = usePersistedTemplate(
-    "We do the best {{service}} in {{city}}"
+    ""
   );
   function GenerateOutput() {
     const inputCities = cities.sort();
@@ -130,7 +128,7 @@ export default function Home() {
             <input
               value={template}
               onChange={({ target: { value } }) => setTemplate(value)}
-              placeholder="Insert Template here, templates will replace {{city}}"
+              placeholder="Template replaces {{service}} && {{city}}"
             />
           </Form.Field>
 
