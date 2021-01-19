@@ -1,23 +1,20 @@
 import React, { useState, useRef } from "react";
-import {
-  Container,
-  Button,
-  Checkbox,
-  Form,
-  Header,
-  Card,
-} from "semantic-ui-react";
+import createPersistedState from "use-persisted-state";
+const usePersistedCities = createPersistedState("cities");
+const usePersistedServices = createPersistedState("services");
+const usePersistedTemplate = createPersistedState("template");
+import { Container, Button, Form, Header, Card, Grid } from "semantic-ui-react";
 import "react-tagsinput/react-tagsinput.css"; // If using WebPack and style-loader.
 import TagsInput from "react-tagsinput";
 
-const OutputCard = ({ text, service }) => {
+const OutputCard = ({ text, service, index, city }) => {
   const textArea = useRef(null);
   const [displayText, setDisplayText] = useState(text);
   const [edited, setEdited] = useState(false);
-  const [copied,setCopied] = useState(false);
+  const [copied, setCopied] = useState(false);
   return (
     <Card>
-      <Card.Content header={service} />
+      <Card.Content header={`${index}: ${service} ${city}`} />
       <Card.Content>
         <textarea
           ref={textArea}
@@ -34,7 +31,7 @@ const OutputCard = ({ text, service }) => {
             textArea.current.select();
             document.execCommand("copy");
             setCopied(true);
-            setTimeout(()=>setCopied(false), 1000)
+            setTimeout(() => setCopied(false), 1000);
           }}
         >
           {copied ? "Coppied!" : "Copy"}
@@ -55,11 +52,14 @@ const OutputCard = ({ text, service }) => {
 };
 
 export default function Home() {
-  const [cities, setCities] = useState(["Seattle", "Tacoma"]);
-  const [services, setServices] = useState(["wash floors", "clean cars"]);
+  const [cities, setCities] = usePersistedCities(["Seattle", "Tacoma"]);
+  const [services, setServices] = usePersistedServices([
+    "wash floors",
+    "clean cars",
+  ]);
 
   const [output, setOutput] = useState({});
-  const [template, setTemplate] = useState(
+  const [template, setTemplate] = usePersistedTemplate(
     "We do the best {{service}} in {{city}}"
   );
   function GenerateOutput() {
@@ -97,8 +97,24 @@ export default function Home() {
             <label>Cities</label>
             <TagsInput
               value={cities}
-              onChange={(val) => setCities(val)}
+              onChange={(val) =>
+                setCities(
+                  val.reduce((collection, string) => {
+                    const splitString = string.split(", ");
+                    collection.push(...splitString);
+                    return collection;
+                  }, [])
+                )
+              }
               inputProps={{ placeholder: "Add a City" }}
+              onlyUnique
+
+              // addOnPaste
+
+              // pasteSplit={(data) => {
+              //   console.log(data)
+              //   return data.split(", ").map((d) => d.trim());
+              // }}
             />
           </Form.Field>
           <Form.Field>
@@ -121,18 +137,40 @@ export default function Home() {
           <Button type="submit" onClick={GenerateOutput}>
             Submit
           </Button>
+          <Button
+            type="submit"
+            onClick={() => {
+              setOutput({});
+              setCities([]);
+              setTemplate("");
+              setServices([]);
+            }}
+          >
+            Clear
+          </Button>
         </Form>
       </Container>
       <Container>
-        {Object.keys(output).map((city) => {
+        {Object.keys(output).map((city, i) => {
           return (
             <Container>
               <Header as="h1" content={city} textAlign="center" />
-              {Object.keys(output[city]).map((service) => {
-                return (
-                  <OutputCard service={service} text={output[city][service]} />
-                );
-              })}
+              <Grid columns={3}>
+                <Grid.Row key={i}>
+                  {Object.keys(output[city]).map((service, index) => {
+                    return (
+                      <Grid.Column>
+                        <OutputCard
+                          index={(index += 1)}
+                          city={city}
+                          service={service}
+                          text={output[city][service]}
+                        />
+                      </Grid.Column>
+                    );
+                  })}
+                </Grid.Row>
+              </Grid>
             </Container>
           );
         })}
