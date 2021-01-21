@@ -1,3 +1,7 @@
+# Live Site
+
+https://panatdacatlin.github.io/TemplatedGenerator/
+
 # About
 
 Templated Generator is a tool to automate a repetitive task identified in a clients workflow.
