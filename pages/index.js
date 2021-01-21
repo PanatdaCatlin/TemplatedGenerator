@@ -1,72 +1,39 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import createPersistedState from "use-persisted-state";
 const usePersistedCities = createPersistedState("cities");
 const usePersistedServices = createPersistedState("services");
-const usePersistedTemplate = createPersistedState("template");
+const usePersistedTitleTemplate = createPersistedState("title-template");
+const usePersistedDescriptionTemplate = createPersistedState(
+  "desciption-template"
+);
+const usePersistedContentTemplate = createPersistedState("content-template");
 import { Container, Button, Form, Header, Card, Grid } from "semantic-ui-react";
 import "react-tagsinput/react-tagsinput.css"; // If using WebPack and style-loader.
 import TagsInput from "react-tagsinput";
-
-const OutputCard = ({ text, service, index, city }) => {
-  const textArea = useRef(null);
-  const [displayText, setDisplayText] = useState(text);
-  const [edited, setEdited] = useState(false);
-  const [copied, setCopied] = useState(false);
-  return (
-    <Card>
-      <Card.Content header={`${index}: ${service} ${city}`} />
-      <Card.Content>
-        <textarea
-          ref={textArea}
-          value={displayText}
-          onChange={(ev) => {
-            setDisplayText(ev.target.value);
-            setEdited(true);
-          }}
-        />
-      </Card.Content>
-      <Card.Content extra>
-        <button
-          onClick={() => {
-            textArea.current.select();
-            document.execCommand("copy");
-            setCopied(true);
-            setTimeout(() => setCopied(false), 1000);
-          }}
-        >
-          {copied ? "Coppied!" : "Copy"}
-        </button>
-        {edited && (
-          <button
-            onClick={() => {
-              setDisplayText(text);
-              setEdited(false);
-            }}
-          >
-            Revert Changes
-          </button>
-        )}
-      </Card.Content>
-    </Card>
-  );
-};
+import TemplateCard from '../components/TemplateCard';
 
 export default function Home() {
   const [cities, setCities] = usePersistedCities([]);
-  const [services, setServices] = usePersistedServices([
-  ]);
+  const [services, setServices] = usePersistedServices([]);
 
-  const [output, setOutput] = useState({});
-  const [template, setTemplate] = usePersistedTemplate(
-    ""
-  );
+  const [titleOutput, setTitleOutput] = useState({});
+  const [rerender, forceRerender] = useState(false);
+  const [descriptionOutput, setDescriptionOutput] = useState({});
+  const [contentOutput, setContentOutput] = useState({});
+  const [titleTemplate, setTitleTemplate] = usePersistedTitleTemplate("");
+  const [
+    descriptionTemplate,
+    setDescriptionTemplate,
+  ] = usePersistedDescriptionTemplate("");
+  const [contentTemplate, setContentTemplate] = usePersistedContentTemplate("");
+  useEffect(()=>forceRerender(!rerender),[]);
   function GenerateOutput() {
     const inputCities = cities.sort();
     const inputServices = services.sort();
-    const outputs = inputCities.reduce((cityCollection, city) => {
+    const titleOutputs = inputCities.reduce((cityCollection, city) => {
       cityCollection[city] = inputServices.reduce(
         (serviceCollection, service) => {
-          let temp = template.replaceAll("{{city}}", city);
+          let temp = titleTemplate.replaceAll("{{city}}", city);
           temp = temp.replaceAll("{{service}}", service);
           serviceCollection[service] = temp;
           return serviceCollection;
@@ -75,10 +42,39 @@ export default function Home() {
       );
       return cityCollection;
     }, {});
-    setOutput(outputs);
+    setTitleOutput(titleOutputs);
+
+    const descriptionOutputs = inputCities.reduce((cityCollection, city) => {
+      cityCollection[city] = inputServices.reduce(
+        (serviceCollection, service) => {
+          let temp = descriptionTemplate.replaceAll("{{city}}", city);
+          temp = temp.replaceAll("{{service}}", service);
+          serviceCollection[service] = temp;
+          return serviceCollection;
+        },
+        {}
+      );
+      return cityCollection;
+    }, {});
+    setDescriptionOutput(descriptionOutputs);
+
+    const contentOutputs = inputCities.reduce((cityCollection, city) => {
+      cityCollection[city] = inputServices.reduce(
+        (serviceCollection, service) => {
+          let temp = contentTemplate.replaceAll("{{city}}", city);
+          temp = temp.replaceAll("{{service}}", service);
+          serviceCollection[service] = temp;
+          return serviceCollection;
+        },
+        {}
+      );
+      return cityCollection;
+    }, {});
+    setContentOutput(contentOutputs);
   }
+
   return (
-    <div>
+    <div style={{marginTop:'50px'}}>
       <Header
         as="h1"
         content="City Service Content Gerator"
@@ -106,13 +102,6 @@ export default function Home() {
               }
               inputProps={{ placeholder: "Add a City" }}
               onlyUnique
-
-              // addOnPaste
-
-              // pasteSplit={(data) => {
-              //   console.log(data)
-              //   return data.split(", ").map((d) => d.trim());
-              // }}
             />
           </Form.Field>
           <Form.Field>
@@ -133,23 +122,47 @@ export default function Home() {
             />
           </Form.Field>
           <Form.Field>
-            <label>Template</label>
-            <input
-              value={template}
-              onChange={({ target: { value } }) => setTemplate(value)}
-              placeholder="Template replaces {{service}} && {{city}}"
+            <label>Title Template</label>
+            <textarea
+              style={{ width: "100%" }}
+              value={titleTemplate}
+              onChange={({ target: { value } }) => setTitleTemplate(value)}
+              placeholder="Template replaces {{service}} and {{city}}"
+            />
+          </Form.Field>
+          <Form.Field>
+            <label>Description Template</label>
+            <textarea
+              style={{ width: "100%" }}
+              value={descriptionTemplate}
+              onChange={({ target: { value } }) =>
+                setDescriptionTemplate(value)
+              }
+              placeholder="Template replaces {{service}} and {{city}}"
+            />
+          </Form.Field>
+          <Form.Field>
+            <label>Content Template</label>
+            <textarea
+              style={{ width: "100%" }}
+              value={contentTemplate}
+              onChange={({ target: { value } }) => setContentTemplate(value)}
+              placeholder="Template replaces {{service}} and {{city}}"
             />
           </Form.Field>
 
-          <Button type="submit" onClick={GenerateOutput}>
+          <Button  onClick={GenerateOutput}>
             Submit
           </Button>
           <Button
-            type="submit"
             onClick={() => {
-              setOutput({});
+              setTitleOutput({});
+              setDescriptionOutput({});
+              setContentOutput({});
               setCities([]);
-              setTemplate("");
+              setTitleTemplate("");
+              setDescriptionTemplate("");
+              setContentTemplate("");
               setServices([]);
             }}
           >
@@ -157,22 +170,26 @@ export default function Home() {
           </Button>
         </Form>
       </Container>
-      <Container>
-        {Object.keys(output).map((city, i) => {
+      
+      <Container >
+        {Object.keys(titleOutput).map((city, i) => {
           return (
-            <Container>
-              <Header as="h1" content={city} textAlign="center" />
+            <Container style={{marginTop:'50px'}}>
+              <Header as="h1" content={city} />
               <Grid columns={3}>
                 <Grid.Row key={i}>
-                  {Object.keys(output[city]).map((service, index) => {
+                  {Object.keys(titleOutput[city]).map((service, index) => {
                     return (
-                      <Grid.Column>
-                        <OutputCard
+                      <Grid.Column key={index} style={{marginTop:'50px'}}>
+                        <TemplateCard 
                           index={(index += 1)}
                           city={city}
                           service={service}
-                          text={output[city][service]}
+                          title={titleOutput[city][service]}
+                          description={descriptionOutput[city][service]}
+                          content={contentOutput[city][service]}
                         />
+                        
                       </Grid.Column>
                     );
                   })}
@@ -185,3 +202,5 @@ export default function Home() {
     </div>
   );
 }
+
+
