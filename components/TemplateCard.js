@@ -36,7 +36,7 @@ export default function TemplateCard({
       setter: setDisplayTitle,
       ref: titleArea,
       copied: copiedTitle,
-      copiedSetter: setCopiedTitle
+      copiedSetter: setCopiedTitle,
     },
     {
       name: "Description",
@@ -44,7 +44,7 @@ export default function TemplateCard({
       setter: setDisplayDescription,
       ref: descriptionArea,
       copied: copiedDesc,
-      copiedSetter: setCopiedDesc
+      copiedSetter: setCopiedDesc,
     },
     {
       name: "Content",
@@ -52,7 +52,7 @@ export default function TemplateCard({
       setter: setDisplayContent,
       ref: contentArea,
       copied: copiedContent,
-      copiedSetter: setCopiedContent
+      copiedSetter: setCopiedContent,
     },
   ];
   return (
@@ -97,7 +97,6 @@ export default function TemplateCard({
             Revert Changes
           </button>
         )}
-       
       </Card.Content>
     </Card>
   );
