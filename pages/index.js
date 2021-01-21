@@ -10,7 +10,7 @@ const usePersistedContentTemplate = createPersistedState("content-template");
 import { Container, Button, Form, Header, Card, Grid } from "semantic-ui-react";
 import "react-tagsinput/react-tagsinput.css"; // If using WebPack and style-loader.
 import TagsInput from "react-tagsinput";
-import TemplateCard from '../components/TemplateCard';
+import TemplateCard from "../components/TemplateCard";
 
 export default function Home() {
   const [cities, setCities] = usePersistedCities([]);
@@ -26,7 +26,7 @@ export default function Home() {
     setDescriptionTemplate,
   ] = usePersistedDescriptionTemplate("");
   const [contentTemplate, setContentTemplate] = usePersistedContentTemplate("");
-  useEffect(()=>forceRerender(!rerender),[]);
+  useEffect(() => forceRerender(!rerender), []);
   function GenerateOutput() {
     const inputCities = cities.sort();
     const inputServices = services.sort();
@@ -74,7 +74,7 @@ export default function Home() {
   }
 
   return (
-    <div style={{marginTop:'50px'}}>
+    <div style={{ marginTop: "50px" }}>
       <Header
         as="h1"
         content="City Service Content Gerator"
@@ -151,9 +151,7 @@ export default function Home() {
             />
           </Form.Field>
 
-          <Button  onClick={GenerateOutput}>
-            Submit
-          </Button>
+          <Button onClick={GenerateOutput}>Submit</Button>
           <Button
             onClick={() => {
               setTitleOutput({});
@@ -170,18 +168,18 @@ export default function Home() {
           </Button>
         </Form>
       </Container>
-      
-      <Container >
+
+      <Container>
         {Object.keys(titleOutput).map((city, i) => {
           return (
-            <Container style={{marginTop:'50px'}}>
+            <Container style={{ marginTop: "50px" }}>
               <Header as="h1" content={city} />
               <Grid columns={3}>
                 <Grid.Row key={i}>
                   {Object.keys(titleOutput[city]).map((service, index) => {
                     return (
-                      <Grid.Column key={index} style={{marginTop:'50px'}}>
-                        <TemplateCard 
+                      <Grid.Column key={index} style={{ marginTop: "50px" }}>
+                        <TemplateCard
                           index={(index += 1)}
                           city={city}
                           service={service}
@@ -189,7 +187,6 @@ export default function Home() {
                           description={descriptionOutput[city][service]}
                           content={contentOutput[city][service]}
                         />
-                        
                       </Grid.Column>
                     );
                   })}
@@ -202,5 +199,3 @@ export default function Home() {
     </div>
   );
 }
-
-
