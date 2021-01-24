@@ -7,6 +7,7 @@ module.exports = {
       "/": { page: "/" },
     };
   },
-  assetPrefix: production ? process.env.NEXT_PUBLIC_REPO : "",
+  repo: production ? process.env.NEXT_PUBLIC_REPO : "",
+  assetPrefix: production ? process.env.NEXT_PUBLIC_ASSET_PREFIX : "",
   github: production ? process.env.NEXT_PUBLIC_GITHUB : "",
 };
