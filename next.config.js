@@ -7,7 +7,7 @@ module.exports = {
       "/": { page: "/" },
     };
   },
-  repo: production ? process.env.NEXT_PUBLIC_REPO : "",
+  basePath: production ? process.env.NEXT_PUBLIC_BASE_PATH : "",
   assetPrefix: production ? process.env.NEXT_PUBLIC_ASSET_PREFIX : "",
   github: production ? process.env.NEXT_PUBLIC_GITHUB : "",
 };

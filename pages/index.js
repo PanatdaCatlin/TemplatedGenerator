@@ -1,7 +1,7 @@
 import Link from "next/link";
 import React, { useState, useRef, useEffect } from "react";
 import Nav from "../components/Nav";
-import { github, repo } from "../next.config";
+import { basePath } from "../next.config";
 export default function Home(props) {
   return (
     <div className="view-wrapper">
@@ -15,7 +15,7 @@ export default function Home(props) {
                 <hr className="wide" />
                 <div className="row">
                   <img
-                    src={`/${repo}city.svg`}
+                    src={`/${basePath}city.svg`}
                     style={{ height: "200px" }}
                   ></img>
                 </div>
@@ -27,7 +27,7 @@ export default function Home(props) {
                 <hr className="wide" />
                 <div className="row">
                   <img
-                    src={`/${repo}braces.svg`}
+                    src={`/${basePath}braces.svg`}
                     style={{ height: "200px" }}
                   ></img>
                 </div>
