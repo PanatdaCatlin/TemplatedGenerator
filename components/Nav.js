@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-import Image from "next/image";
 import Link from "next/link";
 
 function Nav({ title, home }) {
@@ -10,7 +9,7 @@ function Nav({ title, home }) {
     >
       <div className="row">
         <Link href="/">
-          <Image width={150} height={100} src="/PNWLogo.png" />
+          <img style={{height:'100px', width:'150px'}} src="/PNWLogo.png" />
         </Link>
         {!home && (
           <Link href="/">

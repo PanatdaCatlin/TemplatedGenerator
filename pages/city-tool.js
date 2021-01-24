@@ -1,6 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-import Image from "next/image";
-import Link from "next/link";
 
 import createPersistedState from "use-persisted-state";
 const usePersistedCities = createPersistedState("cities");
