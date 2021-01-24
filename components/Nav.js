@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { repo } from "../next.config";
+import { repo, github } from "../next.config";
 
 function Nav({ title, home }) {
   return (
@@ -10,7 +10,10 @@ function Nav({ title, home }) {
     >
       <div className="row">
         <Link href="/">
-          <img style={{height:'100px', width:'150px'}} src={`/${repo}PNWLogo.png`} />
+          <img
+            style={{ height: "100px", width: "150px" }}
+            src={`/${repo}PNWLogo.png`}
+          />
         </Link>
         {!home && (
           <Link href="/">
