@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { assetPrefix } from "../next.config";
 
 function Nav({ title, home }) {
   return (
@@ -9,7 +10,7 @@ function Nav({ title, home }) {
     >
       <div className="row">
         <Link href="/">
-          <img style={{height:'100px', width:'150px'}} src="/PNWLogo.png" />
+          <img style={{height:'100px', width:'150px'}} src={`${assetPrefix}/PNWLogo.png`} />
         </Link>
         {!home && (
           <Link href="/">

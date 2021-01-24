@@ -1,7 +1,8 @@
 import Link from "next/link";
 import React, { useState, useRef, useEffect } from "react";
 import Nav from "../components/Nav";
-export default function Home() {
+import { github, assetPrefix } from "../next.config";
+export default function Home(props) {
   return (
     <div className="view-wrapper">
       <Nav title="Workflow Enhancement Tools" home></Nav>
@@ -13,7 +14,10 @@ export default function Home() {
                 <span className="big-text p">City Service Generator</span>
                 <hr className="wide" />
                 <div className="row">
-                  <img src="/city.svg" style={{ height: "200px" }}></img>
+                  <img
+                    src={`${github}${assetPrefix}city.svg`}
+                    style={{ height: "200px" }}
+                  ></img>
                 </div>
               </div>
             </Link>
@@ -22,7 +26,10 @@ export default function Home() {
                 <span className="big-text p">Template Generator</span>
                 <hr className="wide" />
                 <div className="row">
-                  <img src="/braces.svg" style={{ height: "200px" }}></img>
+                  <img
+                    src={`${github}${assetPrefix}braces.svg`}
+                    style={{ height: "200px" }}
+                  ></img>
                 </div>
               </div>
             </Link>
