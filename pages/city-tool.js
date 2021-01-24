@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import {assetPrefix} from '../next.config';
+import {repo} from '../next.config';
 import createPersistedState from "use-persisted-state";
 const usePersistedCities = createPersistedState("cities");
 const usePersistedServices = createPersistedState("services");
