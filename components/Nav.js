@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { repo, github } from "../next.config";
+import { repo } from "../next.config";
 
 function Nav({ title, home }) {
   return (
@@ -10,7 +10,7 @@ function Nav({ title, home }) {
     >
       <div className="row">
         <Link href="/">
-          <img style={{height:'100px', width:'150px'}} src={`${github}${repo}PNWLogo.png`} />
+          <img style={{height:'100px', width:'150px'}} src={`/${repo}PNWLogo.png`} />
         </Link>
         {!home && (
           <Link href="/">
@@ -24,9 +24,9 @@ function Nav({ title, home }) {
       <div className="row wide">
         <h1 style={{ color: "white", alignSelf: "center" }}>{title}</h1>
       </div>
-      <Link href="https://github.com/PanatdaCatlin/TemplatedGenerator">
+      <Link href={`${github}${repo}`}>
         <img
-          src={`${github}${repo}github-corner-right.svg`}
+          src={`/${repo}github-corner-right.svg`}
           style={{ height: "auto", width: "118px" }}
         />
       </Link>

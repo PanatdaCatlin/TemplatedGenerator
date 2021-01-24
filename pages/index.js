@@ -15,7 +15,7 @@ export default function Home(props) {
                 <hr className="wide" />
                 <div className="row">
                   <img
-                    src={`${github}${repo}city.svg`}
+                    src={`/${repo}city.svg`}
                     style={{ height: "200px" }}
                   ></img>
                 </div>
@@ -27,7 +27,7 @@ export default function Home(props) {
                 <hr className="wide" />
                 <div className="row">
                   <img
-                    src={`${github}${repo}braces.svg`}
+                    src={`/${repo}braces.svg`}
                     style={{ height: "200px" }}
                   ></img>
                 </div>
