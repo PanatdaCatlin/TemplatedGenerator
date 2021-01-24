@@ -12,7 +12,7 @@ function Nav({ title, home }) {
         <Link href="/">
           <img
             style={{ height: "100px", width: "150px" }}
-            src={`/${basePath}PNWLogo.png`}
+            src={`${basePath}/PNWLogo.png`}
           />
         </Link>
         {!home && (
@@ -29,7 +29,7 @@ function Nav({ title, home }) {
       </div>
       <Link href={`${github}${basePath}`}>
         <img
-          src={`/${basePath}github-corner-right.svg`}
+          src={`${basePath}/github-corner-right.svg`}
           style={{ height: "auto", width: "118px" }}
         />
       </Link>
