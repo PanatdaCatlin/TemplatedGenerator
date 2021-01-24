@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 
 import { Card } from "semantic-ui-react";
-
+import { EditableCardContent } from "./EditableCardContent";
 export default function TemplateCard({
   title,
   description,
@@ -56,48 +56,35 @@ export default function TemplateCard({
     },
   ];
   return (
-    <Card>
-      <Card.Content header={`${index}: ${service} ${city}`} />
-
+    <div className="column p elevated wide" >
+      <h2 className="row">{`Service: ${service}`}</h2>
+      {edited && (
+        <button
+          className="row pt"
+          onClick={() => {
+            setDisplayTitle(title);
+            setDisplayDescription(description);
+            setDisplayContent(content);
+            setEdited(false);
+          }}
+        >
+          Revert Changes
+        </button>
+      )}
       {fields.map(({ name, state, ref, setter, copied, copiedSetter }) => (
-        <Card.Content>
-          <span>{name}</span>
-          <textarea
-            ref={ref}
-            value={state}
-            onChange={(ev) => {
-              setter(ev.target.value);
-              setEdited(true);
-            }}
-          />
-
-          <button
-            onClick={() => {
-              ref.current.select();
-              document.execCommand("copy");
-              copiedSetter(true);
-              setTimeout(() => copiedSetter(false), 1000);
-            }}
-          >
-            {copied ? "Coppied!" : "Copy"}
-          </button>
-        </Card.Content>
+        <EditableCardContent
+          {...{
+            key: name,
+            name,
+            state,
+            ref,
+            setter,
+            copied,
+            copiedSetter,
+            setEdited,
+          }}
+        />
       ))}
-
-      <Card.Content extra>
-        {edited && (
-          <button
-            onClick={() => {
-              setDisplayTitle(title);
-              setDisplayDescription(description);
-              setDisplayContent(content);
-              setEdited(false);
-            }}
-          >
-            Revert Changes
-          </button>
-        )}
-      </Card.Content>
-    </Card>
+    </div>
   );
 }
