@@ -1,264 +1,432 @@
-import React, { useState, useRef, useEffect } from "react";
-import {basePath} from '../next.config';
-import createPersistedState from "use-persisted-state";
-const usePersistedCities = createPersistedState("cities");
-const usePersistedServices = createPersistedState("services");
-const usePersistedTitleTemplate = createPersistedState("title-template");
-const usePersistedDescriptionTemplate = createPersistedState(
-  "desciption-template"
-);
-const usePersistedContentTemplate = createPersistedState("content-template");
-import { Button, Form, Header, Card, Grid } from "semantic-ui-react";
-import "react-tagsinput/react-tagsinput.css"; // If using WebPack and style-loader.
-import TagsInput from "react-tagsinput";
-import TemplateCard from "../components/TemplateCard";
-import { Tab } from "semantic-ui-react";
+import React, { useReducer, useState, useRef, useEffect, useMemo } from "react";
+
 import Nav from "../components/Nav";
+import SectionHeader from "../components/SectionHeader";
+import TextareaAutosize from "react-textarea-autosize";
+import {
+  PresetReducer,
+  TemplateReducer,
+  KeyMapReducer,
+  TemplateState,
+  KeyMapState,
+  PresetState,
+} from "../reducers/templated-generator";
+import { downloadJSON, readJSON } from "../hooks/useDownloadJSON";
 
-export default function Home() {
-  const [cities, setCities] = usePersistedCities([]);
-  const [services, setServices] = usePersistedServices([]);
+function TemplatedGenerator() {
+  const [templateStore, templateDispatch] = useReducer(
+    TemplateReducer,
+    TemplateState
+  );
+  const [keyMapStore, keyMapDispatch] = useReducer(KeyMapReducer, KeyMapState);
+  const [presetStore, presetDispatch] = useReducer(PresetReducer, PresetState);
+  const [newKey, setNewKey] = useState("");
+  const [newTemplateName, setNewTemplateName] = useState("");
+  const [templateFilter, setTemplateFilter] = useState("");
+  const [keyMapFilter, setKeyMapFilter] = useState("");
+  const [newKeyMapName, setNewKeyMapName] = useState("");
+  const templateFileInput = useRef();
+  const keyMapFileInput = useRef();
+  const templateOutput = useMemo(() => {
+    let output = templateStore.template;
+    Object.keys(keyMapStore.keyMap).forEach((key) => {
+      const value = keyMapStore.keyMap[key];
+      if (key && value && output && output.replaceAll) {
+        console.log("pre", { output, key, value });
+        output = output.replaceAll(`{{${key}}}`, value);
+        console.log("post", { output, key, value });
+      }
+    });
 
-  const [rerender, forceRerender] = useState(false);
-  const [titleOutput, setTitleOutput] = useState({});
-  const [descriptionOutput, setDescriptionOutput] = useState({});
-  const [contentOutput, setContentOutput] = useState({});
-  const [titleTemplate, setTitleTemplate] = usePersistedTitleTemplate("");
-  const [
-    descriptionTemplate,
-    setDescriptionTemplate,
-  ] = usePersistedDescriptionTemplate("");
-  const [contentTemplate, setContentTemplate] = usePersistedContentTemplate("");
-  useEffect(() => forceRerender(!rerender), []);
-  function GenerateOutput() {
-    const inputCities = cities.sort();
-    const inputServices = services.sort();
-    const titleOutputs = inputCities.reduce((cityCollection, city) => {
-      cityCollection[city] = inputServices.reduce(
-        (serviceCollection, service) => {
-          let temp = titleTemplate.replaceAll("{{city}}", city);
-          temp = temp.replaceAll("{{service}}", service);
-          serviceCollection[service] = temp;
-          return serviceCollection;
-        },
-        {}
-      );
-      return cityCollection;
-    }, {});
-    setTitleOutput(titleOutputs);
+    return output;
+  }, [templateStore, keyMapStore]);
 
-    const descriptionOutputs = inputCities.reduce((cityCollection, city) => {
-      cityCollection[city] = inputServices.reduce(
-        (serviceCollection, service) => {
-          let temp = descriptionTemplate.replaceAll("{{city}}", city);
-          temp = temp.replaceAll("{{service}}", service);
-          serviceCollection[service] = temp;
-          return serviceCollection;
-        },
-        {}
-      );
-      return cityCollection;
-    }, {});
-    setDescriptionOutput(descriptionOutputs);
+  const addKey = () => {
+    keyMapDispatch({ type: "key/add", value: newKey });
+    setNewKey("");
+  };
 
-    const contentOutputs = inputCities.reduce((cityCollection, city) => {
-      cityCollection[city] = inputServices.reduce(
-        (serviceCollection, service) => {
-          let temp = contentTemplate.replaceAll("{{city}}", city);
-          temp = temp.replaceAll("{{service}}", service);
-          serviceCollection[service] = temp;
-          return serviceCollection;
-        },
-        {}
-      );
-      return cityCollection;
-    }, {});
-    setContentOutput(contentOutputs);
-  }
+  const templateEdited = useMemo(
+    () =>
+      templateStore.template !==
+      presetStore.TemplateStates[templateStore.name].template,
+    [templateStore, presetStore]
+  );
 
-  const panes = Object.keys(titleOutput).map((city, i) => {
-    return {
-      menuItem: city,
-      render: () => (
-        <Tab.Pane>
-          <CityService
-            key={i}
-            {...{ city, titleOutput, descriptionOutput, contentOutput }}
-          />
-        </Tab.Pane>
-      ),
-    };
-  });
+  const keyMapEdited = useMemo(
+    () =>
+      JSON.stringify(keyMapStore.keyMap) !==
+      JSON.stringify(presetStore.KeyMapStates[keyMapStore.name].keyMap),
+    [keyMapStore, presetStore]
+  );
+  console.log({ keyMapEdited, keyMapStore, presetStore });
 
   return (
     <div className="view-wrapper">
-      <Nav title=" City Service Content Generator" />
+      <Nav title="City Service Content Generator" />
 
-      <div
-        className="row p rounded elevated outlined"
-        style={{ height: "100px" }}
-      >
-        <h1>Custom Workflow Enhancement Tool</h1>
-      </div>
-      <div className="row flex-wrap">
-        <div
-          className="inputs column outlined rounded p elevated flex-grow"
-          style={{ minWidth: "500px" }}
-        >
-          <Header as="h2" content="Inputs" textAlign="center" />
-          <Form>
-            <div className="row flex-wrap">
-              <div className="p" style={{ minWidth: "300px", maxWidth: "50%" }}>
-                <h3>Cities</h3>
-                <TagsInput
-                  value={cities}
-                  onChange={(val) =>
-                    setCities(
-                      val.reduce((collection, string) => {
-                        const splitString = string.split(", ");
-                        collection.push(...splitString);
-                        return collection;
-                      }, [])
-                    )
-                  }
-                  inputProps={{ placeholder: "Add a City" }}
-                  onlyUnique
-                />
+      <SectionHeader text="Live Template Constructor" dark />
+
+      {/* Inputs */}
+      <div className="inputs row padded">
+        {/* Add new Key*/}
+        <div className="wide column padded elevated rounded bordered">
+          <div className="row lightgrey rounded">{keyMapStore.name} Keys</div>
+          <div className="row flex-grow">
+            <div className="column padded flex-start">
+              <div className="wide row white flex-start ">
+                <input
+                  className="wide"
+                  type="text"
+                  placeholder="Filter"
+                  value={keyMapFilter}
+                  onChange={({ target: { value } }) => setKeyMapFilter(value)}
+                ></input>
               </div>
-              <div className="p" style={{ minWidth: "300px", maxWidth: "50%" }}>
-                <h3>Services</h3>
-                <TagsInput
-                  value={services}
-                  onChange={(val) =>
-                    setServices(
-                      val.reduce((collection, string) => {
-                        const splitString = string.split(", ");
-                        collection.push(...splitString);
-                        return collection;
-                      }, [])
-                    )
-                  }
-                  // onChange={(val) => setServices(val)}
-                  inputProps={{ placeholder: "Add a Service" }}
-                />
-              </div>
-            </div>
-            <div className="row flex-wrap">
-              <div className="column flex-grow" style={{ maxWidth: "500px" }}>
-                <h2>Title Template</h2>
-                <textarea
-                  style={{ width: "100%" }}
-                  value={titleTemplate}
-                  onChange={({ target: { value } }) => setTitleTemplate(value)}
-                  placeholder="Template replaces {{service}} and {{city}}"
-                />
-              </div>
-              <div className="column flex-grow" style={{ maxWidth: "500px" }}>
-                <h2>Description Template</h2>
-                <textarea
-                  style={{ width: "100%" }}
-                  value={descriptionTemplate}
-                  onChange={({ target: { value } }) =>
-                    setDescriptionTemplate(value)
-                  }
-                  placeholder="Template replaces {{service}} and {{city}}"
-                />
-              </div>
-              <div className="column flex-grow" style={{ maxWidth: "500px" }}>
-                <h2>Content Template</h2>
-                <textarea
-                  style={{ width: "100%" }}
-                  value={contentTemplate}
-                  onChange={({ target: { value } }) =>
-                    setContentTemplate(value)
-                  }
-                  placeholder="Template replaces {{service}} and {{city}}"
-                />
-              </div>
-            </div>
-            <div className="row p elevated rounded">
-              <Button positive onClick={GenerateOutput}>
-                {titleOutput && Object.keys(titleOutput).length > 0
-                  ? "Regenerate Outputs"
-                  : "Generate Outputs"}
-              </Button>
-              <Button
-                negative
-                onClick={() => {
-                  setTitleOutput({});
-                  setDescriptionOutput({});
-                  setContentOutput({});
-                  setCities([]);
-                  setTitleTemplate("");
-                  setDescriptionTemplate("");
-                  setContentTemplate("");
-                  setServices([]);
+              <div
+                className="column flex-start  bordered elevated "
+                style={{
+                  overflowY: "auto",
+                  maxHeight: "300px",
+                  minWidth: "150px",
                 }}
               >
-                Clear
-              </Button>
+                {Object.keys(presetStore.KeyMapStates)
+                  .filter(
+                    (presetName) =>
+                      !keyMapFilter ||
+                      presetName
+                        .toLowerCase()
+                        .indexOf(keyMapFilter.toLowerCase()) >= 0
+                  )
+                  .map((presetName) => {
+                    return (
+                      <div
+                        key={presetName}
+                        onClick={({ target: { value } }) => {
+                          keyMapDispatch({
+                            type: "key/load-from-preset",
+                            value: { presetStore, name: presetName },
+                          });
+                        }}
+                        style={{ padding: "3px" }}
+                        className={`row flex-start bordered-b ${
+                          keyMapStore.name === presetName ? "lightgrey" : ""
+                        }`}
+                      >
+                        {presetName}
+                      </div>
+                    );
+                  })}
+              </div>
+              <div className="row wide flex-end">
+                <input
+                  ref={keyMapFileInput}
+                  type="file"
+                  accept="text/json"
+                  onChange={(event) =>
+                    readJSON(keyMapFileInput.current.files[0], (content) =>
+                      presetDispatch({
+                        type: "preset/key/load-from-file",
+                        value: content,
+                      })
+                    )
+                  }
+                />
+                <input
+                  type="button"
+                  value="Export"
+                  onClick={() =>
+                    downloadJSON("keyMap.json", presetStore.KeyMapStates)
+                  }
+                />
+              </div>
             </div>
-          </Form>
-        </div>
-        {titleOutput && Object.keys(titleOutput).length > 0 && (
-          <div
-            className="outputs outlined rounded column p elevated flex-grow"
-            style={{ minWidth: "500px" }}
-          >
-            <Header as="h2" content="Outputs" textAlign="center" />
 
-            <div className="column p elevated">
-              <Tab
-                menu={{
-                  fluid: true,
-                  pointing: true,
-                  tabular: true,
-                  color: "teal",
-                  inverted: true,
+            <table className="table padded wide  ">
+              <thead className="lightgrey">
+                <tr>
+                  <th className="bordered-r bordered-b">Keys</th>
+                  <th className="bordered-b">Values</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div className="row">
+                      <div className="row">
+                        <input
+                          type="text"
+                          value={newKey}
+                          onChange={({ target: { value } }) => setNewKey(value)}
+                          onKeyPress={({ code }) =>
+                            code === "Enter" && addKey()
+                          }
+                          placeholder="New Key"
+                        />
+                        <input
+                          type="button"
+                          value="Add"
+                          className="half-padded "
+                          onClick={() => addKey()}
+                        />
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                {Object.keys(keyMapStore.keyMap).map((key) => {
+                  return (
+                    <tr key={key}>
+                      <td className="bordered-r bordered-b">{`{{ ${key} }}`}</td>
+                      <td className="row bordered-b">
+                        <input
+                          type="text"
+                          className=""
+                          value={keyMapStore.keyMap[key]}
+                          onChange={({ target: { value } }) =>
+                            keyMapDispatch({
+                              type: "key/update",
+                              value: { [key]: value },
+                            })
+                          }
+                          placeholder="...placeholder"
+                        />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="row flex-end ">
+            {keyMapEdited && (
+              <input
+                style={{ marginRight: "20px" }}
+                type="button"
+                value="Update"
+                onClick={() =>
+                  presetDispatch({
+                    type: "preset/key/update",
+                    value: keyMapStore,
+                  })
+                }
+              ></input>
+            )}
+            <div className="column">
+              <input
+                type="text"
+                value={newKeyMapName}
+                onChange={({ target: { value } }) => setNewKeyMapName(value)}
+                onKeyPress={({ code }) => {
+                  if (code === "Enter") {
+                    presetDispatch({
+                      type: "preset/key/add",
+                      value: {
+                        keyMapStore,
+                        newKeyMapName,
+                        keyMapDispatch,
+                      },
+                    });
+
+                    setNewKeyMapName("");
+                  }
                 }}
-                panes={panes}
-              />
+              ></input>
+              <input
+                type="button"
+                value="Save as New"
+                disabled={
+                  !newKeyMapName ||
+                  newKeyMapName.length === 0 ||
+                  presetStore.KeyMapStates[newKeyMapName]
+                }
+                onClick={() => {
+                  presetDispatch({
+                    type: "preset/key/add",
+                    value: {
+                      keyMapStore,
+                      newKeyMapName,
+                      keyMapDispatch,
+                    },
+                  });
+
+                  setNewKeyMapName("");
+                }}
+              ></input>
             </div>
           </div>
-        )}
+        </div>
+
+        {/* Template */}
+
+        <div className="wide column  padded rounded elevated bordered">
+          <div className="row lightgrey rounded">
+            {templateStore.name} Template
+          </div>
+
+          <div className="row flex-grow padded-half">
+            <div className="column padded flex-start">
+              <div
+                className="wide row white flex-start "
+                style={{ position: "sticky", top: "0px" }}
+              >
+                <input
+                  className="wide"
+                  type="text"
+                  placeholder="Filter"
+                  value={templateFilter}
+                  onChange={({ target: { value } }) => setTemplateFilter(value)}
+                ></input>
+              </div>
+              <div
+                className="column flex-start  bordered elevated "
+                style={{
+                  overflowY: "auto",
+                  maxHeight: "300px",
+                  minWidth: "150px",
+                }}
+              >
+                {Object.keys(presetStore.TemplateStates)
+                  .filter(
+                    (presetName) =>
+                      !templateFilter ||
+                      presetName
+                        .toLowerCase()
+                        .indexOf(templateFilter.toLowerCase()) >= 0
+                  )
+                  .map((presetName) => {
+                    return (
+                      <div
+                        key={presetName}
+                        onClick={({ target: { value } }) => {
+                          templateDispatch({
+                            type: "template/load-from-preset",
+                            value: { presetStore, name: presetName },
+                          });
+                        }}
+                        style={{ padding: "3px" }}
+                        className={`row flex-start bordered-b ${
+                          templateStore.name === presetName ? "lightgrey" : ""
+                        }`}
+                      >
+                        {presetName}
+                      </div>
+                    );
+                  })}
+              </div>
+              <div className="row wide flex-end">
+                <input
+                  ref={templateFileInput}
+                  type="file"
+                  accept="text/json"
+                  onChange={(event) =>
+                    readJSON(templateFileInput.current.files[0], (content) =>
+                      presetDispatch({
+                        type: "preset/template/load-from-file",
+                        value: content,
+                      })
+                    )
+                  }
+                />
+                <input
+                  type="button"
+                  value="Export"
+                  onClick={() =>
+                    downloadJSON("templates.json", presetStore.TemplateStates)
+                  }
+                />
+              </div>
+            </div>
+
+            <TextareaAutosize
+              type="textarea"
+              minRows={5}
+              className="padded rounded elevated flex-grow"
+              value={templateStore.template}
+              onChange={({ target: { value } }) =>
+                templateDispatch({ type: "template/update", value })
+              }
+              placeholder="...Paste your template here..."
+            ></TextareaAutosize>
+          </div>
+          <div className="row flex-end">
+            {templateEdited && (
+              <input
+                style={{ marginRight: "20px" }}
+                type="button"
+                value="Update"
+                onClick={() =>
+                  presetDispatch({
+                    type: "preset/template/update",
+                    value: templateStore,
+                  })
+                }
+              ></input>
+            )}
+            <div className="column ">
+              <input
+                type="text"
+                value={newTemplateName}
+                onChange={({ target: { value } }) => setNewTemplateName(value)}
+                onKeyPress={({ code }) => {
+                  if (code === "Enter") {
+                    presetDispatch({
+                      type: "preset/template/add",
+                      value: {
+                        templateStore,
+                        newTemplateName,
+                        templateDispatch,
+                      },
+                    });
+
+                    setNewTemplateName("");
+                  }
+                }}
+              ></input>
+              <input
+                type="button"
+                value="Save as New"
+                disabled={
+                  !newTemplateName ||
+                  newTemplateName.length === 0 ||
+                  presetStore.TemplateStates[newTemplateName]
+                }
+                onClick={() => {
+                  presetDispatch({
+                    type: "preset/template/add",
+                    value: {
+                      templateStore,
+                      newTemplateName,
+                      templateDispatch,
+                    },
+                  });
+
+                  setNewTemplateName("");
+                }}
+              ></input>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* Outputs*/}
+      <div className="inputs row padded flex-start">
+        {/* Add new Key*/}
+        <div className="wide column  padded rounded elevated bordered">
+          <div className="row lightgrey rounded">Output</div>
+          <div className="row flex-grow padded-half">
+            <TextareaAutosize
+              type="textarea"
+              minRows={5}
+              className="padded rounded elevated flex-grow"
+              value={templateOutput}
+              placeholder="Your text will appear here once entered"
+            ></TextareaAutosize>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
-function CityService({ city, titleOutput, descriptionOutput, contentOutput }) {
-  const panes = Object.keys(titleOutput[city]).map((service, index) => {
-    return {
-      menuItem: service,
-      render: () => (
-        <Tab.Pane>
-          <TemplateCard
-            key={index}
-            index={(index += 1)}
-            city={city}
-            service={service}
-            title={titleOutput[city][service]}
-            description={descriptionOutput[city][service]}
-            content={contentOutput[city][service]}
-          />
-        </Tab.Pane>
-      ),
-    };
-  });
-  return (
-    <div className="column" key={city}>
-      <div className="row flex-wrap">
-        <Tab
-          menu={{
-            vertical: true,
-            pointing: false,
-            tabular: false,
-            inverted: true,
-            color: "blue",
-          }}
-          panes={panes}
-        />
-      </div>
-    </div>
-  );
-}
+export default TemplatedGenerator;

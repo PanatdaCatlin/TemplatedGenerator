@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import {basePath} from '../next.config';
+import { basePath } from "../next.config";
 import createPersistedState from "use-persisted-state";
 const usePersistedCities = createPersistedState("cities");
 const usePersistedServices = createPersistedState("services");
@@ -12,6 +12,7 @@ import { Button, Form, Header, Card, Grid } from "semantic-ui-react";
 import "react-tagsinput/react-tagsinput.css"; // If using WebPack and style-loader.
 import TagsInput from "react-tagsinput";
 import TemplateCard from "../components/TemplateCard";
+import SectionHeader from "../components/SectionHeader";
 import { Tab } from "semantic-ui-react";
 import Nav from "../components/Nav";
 
@@ -94,21 +95,16 @@ export default function Home() {
     <div className="view-wrapper">
       <Nav title=" City Service Content Generator" />
 
-      <div
-        className="row p rounded elevated outlined"
-        style={{ height: "100px" }}
-      >
-        <h1>Custom Workflow Enhancement Tool</h1>
-      </div>
+      <SectionHeader dark text="Service & City" />
       <div className="row flex-wrap">
         <div
-          className="inputs column outlined rounded p elevated flex-grow"
+          className="inputs column outlined roundedpadded elevated flex-grow"
           style={{ minWidth: "500px" }}
         >
           <Header as="h2" content="Inputs" textAlign="center" />
           <Form>
             <div className="row flex-wrap">
-              <div className="p" style={{ minWidth: "300px", maxWidth: "50%" }}>
+              <div className="padded" style={{ minWidth: "300px", maxWidth: "50%" }}>
                 <h3>Cities</h3>
                 <TagsInput
                   value={cities}
@@ -125,7 +121,7 @@ export default function Home() {
                   onlyUnique
                 />
               </div>
-              <div className="p" style={{ minWidth: "300px", maxWidth: "50%" }}>
+              <div className="padded" style={{ minWidth: "300px", maxWidth: "50%" }}>
                 <h3>Services</h3>
                 <TagsInput
                   value={services}
@@ -176,7 +172,7 @@ export default function Home() {
                 />
               </div>
             </div>
-            <div className="row p elevated rounded">
+            <div className="rowpadded elevated rounded">
               <Button positive onClick={GenerateOutput}>
                 {titleOutput && Object.keys(titleOutput).length > 0
                   ? "Regenerate Outputs"
@@ -202,12 +198,12 @@ export default function Home() {
         </div>
         {titleOutput && Object.keys(titleOutput).length > 0 && (
           <div
-            className="outputs outlined rounded column p elevated flex-grow"
+            className="outputs outlined rounded columnpadded elevated flex-grow"
             style={{ minWidth: "500px" }}
           >
             <Header as="h2" content="Outputs" textAlign="center" />
 
-            <div className="column p elevated">
+            <div className="columnpadded elevated">
               <Tab
                 menu={{
                   fluid: true,

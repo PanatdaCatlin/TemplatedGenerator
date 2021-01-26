@@ -56,7 +56,7 @@ export default function TemplateCard({
     },
   ];
   return (
-    <div className="column p elevated wide" >
+    <div className="column padded elevated wide" >
       <h2 className="row">{`Service: ${service}`}</h2>
       {edited && (
         <button

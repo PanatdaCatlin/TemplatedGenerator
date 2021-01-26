@@ -8,10 +8,10 @@ export default function Home(props) {
       <Nav title="Workflow Enhancement Tools" home></Nav>
       <div className="column pt">
         <div className="row">
-          <div className="row thin p elevated rounded">
+          <div className="row thin padded elevated rounded">
             <Link href="/city-tool">
-              <div className="column p elevated rounded outlined hoverable clickable">
-                <span className="big-text p">City Service Generator</span>
+              <div className="column padded elevated rounded outlined hoverable clickable">
+                <span className="big-text padded">City Service Generator</span>
                 <hr className="wide" />
                 <div className="row">
                   <img
@@ -22,8 +22,8 @@ export default function Home(props) {
               </div>
             </Link>
             <Link href="/template-generator">
-              <div className="column p elevated rounded outlined hoverable clickable">
-                <span className="big-text p">Template Generator</span>
+              <div className="column padded elevated rounded outlined hoverable clickable">
+                <span className="big-text padded">Template Generator</span>
                 <hr className="wide" />
                 <div className="row">
                   <img

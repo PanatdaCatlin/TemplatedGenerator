@@ -9,12 +9,12 @@ function Nav({ title, home }) {
       style={{ backgroundColor: "#232323", height: "100px" }}
     >
       <div className="row">
-        <Link href="/">
+        {home && (
           <img
             style={{ height: "100px", width: "150px" }}
             src={`${basePath}/PNWLogo.png`}
           />
-        </Link>
+        )}
         {!home && (
           <Link href={`/`}>
             <a
@@ -29,8 +29,9 @@ function Nav({ title, home }) {
       </div>
       <Link href={`${github}${basePath}`}>
         <img
+        
           src={`${basePath}/github-corner-right.svg`}
-          style={{ height: "auto", width: "118px" }}
+          style={{ height: "50px", width: "auto" }}
         />
       </Link>
     </nav>
