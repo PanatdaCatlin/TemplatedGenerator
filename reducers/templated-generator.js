@@ -48,13 +48,9 @@ function PresetReducer(state, action) {
   const { type, value } = action;
   switch (type) {
     case "preset/template/add": {
-      const {
-        templateStore: { template, name },
-        newTemplateName,
-        templateDispatch,
-      } = value;
+      const { newTemplateName, templateDispatch } = value;
       state.TemplateStates[newTemplateName] = {
-        template,
+        template: {},
         name: newTemplateName,
       };
       templateDispatch({
@@ -74,19 +70,23 @@ function PresetReducer(state, action) {
       break;
     }
     case "preset/key/add": {
-      const {
-        keyMapStore: { keyMap, name },
-        newKeyMapName,
-        keyMapDispatch,
-      } = value;
+      const { newKeyMapName, keyMapDispatch } = value;
       state.KeyMapStates[newKeyMapName] = {
-        keyMap,
+        keyMap: {},
         name: newKeyMapName,
       };
       keyMapDispatch({
         type: "key/load-from-preset",
         value: { presetStore: state, name: newKeyMapName },
       });
+      break;
+    }
+    case "preset/key/delete": {
+      delete state.KeyMapStates[value];
+      break;
+    }
+    case "preset/template/delete": {
+      delete state.TemplateStates[value];
       break;
     }
     case "preset/key/load-from-file": {
