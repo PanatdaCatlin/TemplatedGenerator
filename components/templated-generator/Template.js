@@ -17,7 +17,7 @@ const steps = [
       "Switch between sets of Keys and Values by selecting a Set in this list",
   },
   {
-    selector: ".manage-files",
+    selector: ".template-files",
     content:
       "Download a File of all your current KeyMaps, or load a set of KeyMaps using the FilePicker",
   },
@@ -51,7 +51,6 @@ const Template = function ({
         <div className="template-list column padded flex-start">
           <div
             className="wide row white flex-start "
-            style={{ position: "sticky", top: "0px" }}
           >
             <input
               className="wide"

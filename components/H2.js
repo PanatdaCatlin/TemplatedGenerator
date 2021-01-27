@@ -8,8 +8,8 @@ export default function H2({ text, help }) {
         <div
           onClick={help}
           style={{ marginRight: "10px" }}
-          className="big-text column clickable hoverable"
-        >{`( ? )`}</div>
+          className="column clickable hoverable"
+        >{`(tutorial)`}</div>
       )}
     </div>
   );

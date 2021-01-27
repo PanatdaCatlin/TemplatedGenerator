@@ -15,7 +15,7 @@ export default function H1({ text, dark, help }) {
         <div
           onClick={help}
           className="big-text column clickable hoverable"
-        >{`{{Tutorial}}`}</div>
+        >{`(tutorial)`}</div>
       )}
     </div>
   );
