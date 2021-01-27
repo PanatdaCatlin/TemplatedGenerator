@@ -1,7 +1,21 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
+import dynamic from "next/dynamic";
+
 import TextareaAutosize from "react-textarea-autosize";
+import H2 from "../../components/H2";
+const Tour = dynamic(() => import("reactour"), { ssr: false });
+
+const steps = [
+  {
+    selector: ".output-container",
+    content:
+      "This area will update live as you type Templates, or modify KeyMap values",
+  },
+];
 
 const Output = function ({ templateStore, keyMapStore }) {
+  const [isTourOpen, setIsTourOpen] = useState(false);
+
   const templateOutput = useMemo(() => {
     let output = templateStore.template;
     Object.keys(keyMapStore.keyMap).forEach((key) => {
@@ -14,8 +28,8 @@ const Output = function ({ templateStore, keyMapStore }) {
     return output;
   }, [templateStore, keyMapStore]);
   return (
-    <div className="wide column  padded rounded elevated bordered">
-      <div className="row lightgrey rounded">Output</div>
+    <div className="output-container wide column  padded rounded elevated bordered">
+      <H2 text="Output" help={()=>setIsTourOpen(true)} />
       <div className="row flex-grow padded-half">
         <TextareaAutosize
           type="textarea"
@@ -25,6 +39,11 @@ const Output = function ({ templateStore, keyMapStore }) {
           placeholder="Your text will appear here once entered"
         ></TextareaAutosize>
       </div>
+      <Tour
+        steps={steps}
+        isOpen={isTourOpen}
+        onRequestClose={() => setIsTourOpen(false)}
+      />
     </div>
   );
 };

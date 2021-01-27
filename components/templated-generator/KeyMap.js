@@ -1,6 +1,31 @@
 import React, { useState, useRef, useMemo } from "react";
 import { downloadJSON, readJSON } from "../../hooks/useDownloadJSON";
+import dynamic from "next/dynamic";
+import H2 from "../H2";
+const Tour = dynamic(() => import("reactour"), { ssr: false });
 
+const steps = [
+  {
+    selector: ".keymap-table",
+    content:
+      "The Keys and Values in this list will replace the {{Keys}} in the Template",
+  },
+  {
+    selector: ".keyentry-create",
+    content:
+      "Add new keys to the set by entering a value and clicking Add",
+  },
+  {
+    selector: ".keymap-list",
+    content:
+      "Switch between sets of Keys and Values by selecting a Set in this list",
+  },
+  {
+    selector: ".keymap-files",
+    content:
+      "Download a File of all your current KeyMaps, or load a set of KeyMaps using the FilePicker",
+  },
+];
 const KeyMap = function ({
   presetStore,
   presetDispatch,
@@ -25,14 +50,16 @@ const KeyMap = function ({
       JSON.stringify(presetStore.KeyMapStates[keyMapStore.name].keyMap),
     [keyMapStore, presetStore]
   );
+  const [isTourOpen, setIsTourOpen] = useState(false);
+
   return (
     <div
-      className="column padded elevated rounded bordered"
+      className="keymap-container column padded elevated rounded bordered"
       style={{ flexGrow: 1 }}
     >
-      <div className="row lightgrey rounded">{keyMapStore.name} Keys</div>
+      <H2 text={"KeyMap"} help={() => setIsTourOpen(true)}></H2>
       <div className="row flex-grow">
-        <div className="column padded flex-start tall">
+        <div className="column keymap-list padded flex-start tall">
           <div className="wide row white flex-start ">
             <input
               className="wide"
@@ -42,16 +69,15 @@ const KeyMap = function ({
               onChange={({ target: { value } }) => setKeyMapFilter(value)}
             ></input>
           </div>
-          
+
           <div
-            className="column flex-start bordered elevated "
+            className=" column flex-start bordered elevated "
             style={{
               overflowY: "auto",
               maxHeight: "300px",
               minWidth: "150px",
             }}
           >
-              
             {Object.keys(presetStore.KeyMapStates)
               .filter(
                 (presetName) =>
@@ -113,14 +139,36 @@ const KeyMap = function ({
                 );
               })}
           </div>
-          <div className="column">
-          <input
-            type="text"
-            value={newKeyMapName}
-            placeholder="...new keymap name"
-            onChange={({ target: { value } }) => setNewKeyMapName(value)}
-            onKeyPress={({ code }) => {
-              if (code === "Enter") {
+          <div className="row keymap-create">
+            <input
+              type="text"
+              value={newKeyMapName}
+              placeholder="...new keymap name"
+              onChange={({ target: { value } }) => setNewKeyMapName(value)}
+              onKeyPress={({ code }) => {
+                if (code === "Enter") {
+                  presetDispatch({
+                    type: "preset/key/add",
+                    value: {
+                      keyMapStore,
+                      newKeyMapName,
+                      keyMapDispatch,
+                    },
+                  });
+
+                  setNewKeyMapName("");
+                }
+              }}
+            ></input>
+            <input
+              type="button"
+              value="Add"
+              disabled={
+                !newKeyMapName ||
+                newKeyMapName.length === 0 ||
+                presetStore.KeyMapStates[newKeyMapName]
+              }
+              onClick={() => {
                 presetDispatch({
                   type: "preset/key/add",
                   value: {
@@ -131,32 +179,10 @@ const KeyMap = function ({
                 });
 
                 setNewKeyMapName("");
-              }
-            }}
-          ></input>
-          <input
-            type="button"
-            value="Add"
-            disabled={
-              !newKeyMapName ||
-              newKeyMapName.length === 0 ||
-              presetStore.KeyMapStates[newKeyMapName]
-            }
-            onClick={() => {
-              presetDispatch({
-                type: "preset/key/add",
-                value: {
-                  keyMapStore,
-                  newKeyMapName,
-                  keyMapDispatch,
-                },
-              });
-
-              setNewKeyMapName("");
-            }}
-          ></input>
-        </div>
-          <div className="row flex-space-between pt">
+              }}
+            ></input>
+          </div>
+          <div className="keymap-files row flex-space-between pt">
             {!upload && (
               <input
                 type="button"
@@ -188,10 +214,9 @@ const KeyMap = function ({
               }
             />
           </div>
-          
         </div>
 
-        <table className="table padded wide  ">
+        <table className="keymap-table table padded wide  ">
           <thead className="lightgrey">
             <tr>
               <th className="bordered-r bordered-b">Keys</th>
@@ -199,27 +224,6 @@ const KeyMap = function ({
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>
-                <div className="row">
-                  <div className="row">
-                    <input
-                      type="text"
-                      value={newKey}
-                      onChange={({ target: { value } }) => setNewKey(value)}
-                      onKeyPress={({ code }) => code === "Enter" && addKey()}
-                      placeholder="New Key"
-                    />
-                    <input
-                      type="button"
-                      value="Add"
-                      className="half-padded "
-                      onClick={() => addKey()}
-                    />
-                  </div>
-                </div>
-              </td>
-            </tr>
             {Object.keys(keyMapStore.keyMap).map((key) => {
               return (
                 <tr key={key}>
@@ -241,6 +245,24 @@ const KeyMap = function ({
                 </tr>
               );
             })}
+            <tr>
+              <td className="row keyentry-create">
+                <input
+                  type="text"
+                  className="flexGrow "
+                  value={newKey}
+                  onChange={({ target: { value } }) => setNewKey(value)}
+                  onKeyPress={({ code }) => code === "Enter" && addKey()}
+                  placeholder="New Key"
+                />
+                <input
+                  type="button"
+                  value="Add"
+                  disabled={!newKey || keyMapStore.keyMap[newKey]}
+                  onClick={() => addKey()}
+                ></input>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -260,6 +282,11 @@ const KeyMap = function ({
           ></input>
         )}
       </div>
+      <Tour
+        steps={steps}
+        isOpen={isTourOpen}
+        onRequestClose={() => setIsTourOpen(false)}
+      />
     </div>
   );
 };

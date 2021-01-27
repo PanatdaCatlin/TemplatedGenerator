@@ -1,7 +1,27 @@
 import React, { useState, useRef, useMemo } from "react";
+import dynamic from "next/dynamic";
+import H2 from "../../components/H2";
 import { downloadJSON, readJSON } from "../../hooks/useDownloadJSON";
 import TextareaAutosize from "react-textarea-autosize";
+const Tour = dynamic(() => import("reactour"), { ssr: false });
 
+const steps = [
+  {
+    selector: ".template-text",
+    content:
+      "The Keys and Values in this list will replace the {{Keys}} in the Template",
+  },
+  {
+    selector: ".template-list",
+    content:
+      "Switch between sets of Keys and Values by selecting a Set in this list",
+  },
+  {
+    selector: ".manage-files",
+    content:
+      "Download a File of all your current KeyMaps, or load a set of KeyMaps using the FilePicker",
+  },
+];
 const Template = function ({
   presetStore,
   presetDispatch,
@@ -19,16 +39,16 @@ const Template = function ({
     [templateStore, presetStore]
   );
   const [upload, setUpload] = useState(false);
-
+  const [isTourOpen, setIsTourOpen] = useState(false);
   return (
     <div
-      className=" column  padded rounded elevated bordered"
+      className="template-container column  padded rounded elevated bordered"
       style={{ flexGrow: 5 }}
     >
-      <div className="row lightgrey rounded">{templateStore.name} Template</div>
+      <H2 text="Template" help={() => setIsTourOpen(true)} />
 
       <div className="row flex-grow padded-half">
-        <div className="column padded flex-start">
+        <div className="template-list column padded flex-start">
           <div
             className="wide row white flex-start "
             style={{ position: "sticky", top: "0px" }}
@@ -110,7 +130,7 @@ const Template = function ({
                   </div>
                 );
               })}
-            <div className="column">
+            <div className="row">
               <input
                 type="text"
                 placeholder="...new template name"
@@ -154,7 +174,7 @@ const Template = function ({
               ></input>
             </div>
           </div>
-          <div className="row wide flex-space-between pt">
+          <div className="template-files row wide flex-space-between pt">
             {!upload && (
               <input
                 type="button"
@@ -191,7 +211,7 @@ const Template = function ({
         <TextareaAutosize
           type="textarea"
           minRows={5}
-          className="padded rounded elevated flex-grow"
+          className="padded rounded elevated flex-grow template-text"
           value={templateStore.template}
           onChange={({ target: { value } }) =>
             templateDispatch({ type: "template/update", value })
@@ -214,6 +234,11 @@ const Template = function ({
           ></input>
         )}
       </div>
+      <Tour
+        steps={steps}
+        isOpen={isTourOpen}
+        onRequestClose={() => setIsTourOpen(false)}
+      />
     </div>
   );
 };
