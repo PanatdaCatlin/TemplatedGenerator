@@ -38,6 +38,7 @@ const KeyMap = function ({
   const [newKey, setNewKey] = useState("");
   const [keyMapFilter, setKeyMapFilter] = useState("");
   const [confirmKill, setConfirmKill] = useState(null);
+  const [confirmKillKey, setConfirmKillKey] = useState(null);
 
   const keyMapFileInput = useRef();
   const [newKeyMapName, setNewKeyMapName] = useState("");
@@ -97,6 +98,7 @@ const KeyMap = function ({
                     }`}
                   >
                     <div
+                      className="flex-grow"
                       key={presetName}
                       onClick={({ target: { value } }) => {
                         keyMapDispatch({
@@ -230,8 +232,42 @@ const KeyMap = function ({
             {Object.keys(keyMapStore.keyMap).map((key) => {
               return (
                 <tr key={key}>
-                  <td className="bordered-r bordered-b">{`{{ ${key} }}`}</td>
-                  <td className="row bordered-b">
+                  <td className="bordered-r bordered-b">
+                    <div className="row flex-space-between">
+                      <div className="column">{`{{ ${key} }}`}</div>
+                      <div className="column">
+                        <>
+                          {confirmKillKey !== key && (
+                            <div
+                              className="column"
+                              onClick={() => setConfirmKillKey(key)}
+                            >{`X`}</div>
+                          )}
+                          {confirmKillKey === key && (
+                            <div
+                              className="row flex-space-between"
+                              style={{ width: "35px", marginRight: "5px" }}
+                            >
+                              <div
+                                className="column"
+                                onClick={() => setConfirmKillKey(null)}
+                              >{`❌`}</div>
+                              <div
+                                className="column"
+                                onClick={() =>
+                                  keyMapDispatch({
+                                    type: "key/delete",
+                                    value: key,
+                                  })
+                                }
+                              >{`✅ `}</div>
+                            </div>
+                          )}
+                        </>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="row flex-grow bordered-b">
                     <TagsInput
                       className="row flex-grow flex-end"
                       value={keyMapStore.keyMap[key]}

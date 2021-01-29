@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useRef } from "react";
+import React, { useMemo, useState, useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
 
 import TextareaAutosize from "react-textarea-autosize";
@@ -22,12 +22,23 @@ const Output = function ({ templateStore, keyMapStore }) {
   const [isTourOpen, setIsTourOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const outputRef = useRef(null);
-  const [selected, setSelected] = useState(
-    Object.keys(keyMapStore.keyMap).reduce((collection, key) => {
-      collection[key] = keyMapStore.keyMap[key][0] || "";
-      return collection;
-    }, {})
-  );
+  const [selected, setSelected] = useState({});
+
+  useEffect(() => {
+    const newSelect = Object.keys(keyMapStore.keyMap).reduce(
+      (collection, key) => {
+        if (selected[key] && keyMapStore.keyMap[key].includes(selected[key])) {
+          collection[key] = selected[key];
+        } else {
+          collection[key] = keyMapStore.keyMap[key][0] || "";
+        }
+        return collection;
+      },
+      {}
+    );
+    setSelected(newSelect);
+  }, [keyMapStore]);
+
   const templateOutput = useMemo(() => {
     let output = templateStore.template;
     Object.keys(keyMapStore.keyMap).forEach((key) => {
@@ -48,8 +59,9 @@ const Output = function ({ templateStore, keyMapStore }) {
             return (
               <div className="column outlined" style={{ marginTop: "15px" }}>
                 <div className="row big-text bordered-b half-padded">{key}</div>
-                <div style={{ maxHeight: "300px", overflowY: "auto" }}>
+                <div style={{ maxHeight: "300px", maxWidth:'300px', overflowY: "auto" }}>
                   {keyMapStore.keyMap[key].map((value) => {
+                   
                     return (
                       <div
                         onClick={() =>

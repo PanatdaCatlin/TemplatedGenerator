@@ -1,24 +1,25 @@
 const localStorage = global?.localStorage ?? { getItem: () => null };
 const localPresets = localStorage.getItem("Presets");
+const initial = {
+  KeyMapStates: {
+    Default: {
+      keyMap: {
+        City: ["Seattle", "Tacoma"],
+        Service: ["Carpet Cleaning", "Window Repair"],
+        Currency: ["$$$"],
+      },
+    },
+  },
+  TemplateStates: {
+    Default: {
+      template: "The best {{Service}} in {{City}} for your {{Currency}}",
+    },
+  },
+};
 const PresetState =
   localPresets !== null
     ? JSON.parse(localPresets)
-    : {
-        KeyMapStates: {
-          Default: {
-            keyMap: {
-              City: ["Seattle"],
-              Service: ["Window Repair"],
-              Currency: ["dollar"],
-            },
-          },
-        },
-        TemplateStates: {
-          Default: {
-            template: "The best {{Service}} in {{City}} for your {{Currency}}",
-          },
-        },
-      };
+    : JSON.parse(JSON.stringify(initial));
 
 const KeyMapState = {
   keyMap: JSON.parse(JSON.stringify(PresetState.KeyMapStates.Default.keyMap)),
@@ -38,7 +39,7 @@ function PresetReducer(state, action) {
     case "preset/template/add": {
       const { newTemplateName, templateDispatch } = value;
       state.TemplateStates[newTemplateName] = {
-        template: {},
+        template: "",
         name: newTemplateName,
       };
       templateDispatch({
@@ -83,6 +84,20 @@ function PresetReducer(state, action) {
     }
     case "preset/template/load-from-file": {
       state.TemplateStates = value;
+
+      break;
+    }
+    case "preset/reset": {
+      const { keyMapDispatch, templateDispatch } = value;
+      state = JSON.parse(JSON.stringify(initial));
+      keyMapDispatch({
+        type: "key/load-from-preset",
+        value: { presetStore: state, name: "Default" },
+      });
+      templateDispatch({
+        type: "template/load-from-preset",
+        value: { presetStore: state, name: "Default" },
+      });
       break;
     }
     default:
