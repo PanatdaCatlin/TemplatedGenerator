@@ -12,7 +12,7 @@ import { Button, Form, Header, Card, Grid } from "semantic-ui-react";
 import "react-tagsinput/react-tagsinput.css"; // If using WebPack and style-loader.
 import TagsInput from "react-tagsinput";
 import TemplateCard from "../components/TemplateCard";
-import SectionHeader from "../components/SectionHeader";
+import H1 from "../components/H1";
 import { Tab } from "semantic-ui-react";
 import Nav from "../components/Nav";
 
@@ -95,7 +95,7 @@ export default function Home() {
     <div className="view-wrapper">
       <Nav title=" City Service Content Generator" />
 
-      <SectionHeader dark text="Service & City" />
+      <H1 dark text="Service & City" />
       <div className="row flex-wrap">
         <div
           className="inputs column outlined roundedpadded elevated flex-grow"

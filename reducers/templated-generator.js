@@ -1,6 +1,5 @@
 const localStorage = global?.localStorage ?? { getItem: () => null };
 const localPresets = localStorage.getItem("Presets");
-console.log({ localPresets });
 const PresetState =
   localPresets !== null
     ? JSON.parse(localPresets)
@@ -8,26 +7,15 @@ const PresetState =
         KeyMapStates: {
           Default: {
             keyMap: {
-              City: "Seattle",
-              Service: "Window Repair",
-              Currency: "dollar",
-            },
-          },
-          Alternate: {
-            keyMap: {
-              City: "Tacoma",
-              Service: "Window Repair",
-              Currency: "TacomaDollars",
+              City: ["Seattle"],
+              Service: ["Window Repair"],
+              Currency: ["dollar"],
             },
           },
         },
         TemplateStates: {
           Default: {
             template: "The best {{Service}} in {{City}} for your {{Currency}}",
-          },
-          Alternate: {
-            template:
-              "The best {{City}} for {{Service}} for the least {{Currency}}",
           },
         },
       };
@@ -109,12 +97,16 @@ function KeyMapReducer(state, action) {
   switch (type) {
     case "key/add":
       if (!state.keyMap[value]) {
-        state.keyMap[value] = "";
+        state.keyMap[value] = [];
         return { ...state };
       }
       break;
     case "key/update":
       Object.assign(state.keyMap, value);
+      return { ...state };
+      break;
+    case "key/delete":
+      delete state.keyMap[value];
       return { ...state };
       break;
     case "key/load-from-preset":

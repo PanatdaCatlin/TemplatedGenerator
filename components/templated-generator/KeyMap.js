@@ -2,6 +2,10 @@ import React, { useState, useRef, useMemo } from "react";
 import { downloadJSON, readJSON } from "../../hooks/useDownloadJSON";
 import dynamic from "next/dynamic";
 import H2 from "../H2";
+
+import "react-tagsinput/react-tagsinput.css"; // If using WebPack and style-loader.
+import TagsInput from "react-tagsinput";
+
 const Tour = dynamic(() => import("reactour"), { ssr: false });
 
 const steps = [
@@ -12,8 +16,7 @@ const steps = [
   },
   {
     selector: ".keyentry-create",
-    content:
-      "Add new keys to the set by entering a value and clicking Add",
+    content: "Add new keys to the set by entering a value and clicking Add",
   },
   {
     selector: ".keymap-list",
@@ -229,17 +232,16 @@ const KeyMap = function ({
                 <tr key={key}>
                   <td className="bordered-r bordered-b">{`{{ ${key} }}`}</td>
                   <td className="row bordered-b">
-                    <input
-                      type="text"
-                      className=""
+                    <TagsInput
+                      className="row flex-grow flex-end"
                       value={keyMapStore.keyMap[key]}
-                      onChange={({ target: { value } }) =>
+                      onChange={(value) =>
                         keyMapDispatch({
                           type: "key/update",
                           value: { [key]: value },
                         })
                       }
-                      placeholder="...placeholder"
+                      onlyUnique
                     />
                   </td>
                 </tr>
