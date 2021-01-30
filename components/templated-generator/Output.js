@@ -3,6 +3,7 @@ import dynamic from "next/dynamic";
 
 import TextareaAutosize from "react-textarea-autosize";
 import H2 from "../../components/H2";
+import ErrorBoundary from "../ErrorBoundary";
 const Tour = dynamic(() => import("reactour"), { ssr: false });
 
 const steps = [
@@ -59,9 +60,14 @@ const Output = function ({ templateStore, keyMapStore }) {
             return (
               <div className="column outlined" style={{ marginTop: "15px" }}>
                 <div className="row big-text bordered-b half-padded">{key}</div>
-                <div style={{ maxHeight: "300px", maxWidth:'300px', overflowY: "auto" }}>
+                <div
+                  style={{
+                    maxHeight: "300px",
+                    maxWidth: "300px",
+                    overflowY: "auto",
+                  }}
+                >
                   {keyMapStore.keyMap[key].map((value) => {
-                   
                     return (
                       <div
                         onClick={() =>
@@ -114,4 +120,20 @@ const Output = function ({ templateStore, keyMapStore }) {
   );
 };
 
-export default Output;
+export default (props) => (
+  <ErrorBoundary
+    CustomHandler={({ resolve }) => {
+      return (
+        <input
+          type="button"
+          value="reset"
+          onClick={() => {
+            resolve();
+          }}
+        />
+      );
+    }}
+  >
+    <Output {...props} />
+  </ErrorBoundary>
+);

@@ -88,7 +88,7 @@ function PresetReducer(state, action) {
       break;
     }
     case "preset/reset": {
-      const { keyMapDispatch, templateDispatch } = value;
+      const { keyMapDispatch = () => {}, templateDispatch = () => {} } = value;
       state = JSON.parse(JSON.stringify(initial));
       keyMapDispatch({
         type: "key/load-from-preset",

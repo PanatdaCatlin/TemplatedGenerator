@@ -5,6 +5,7 @@ import KeyMap from "./KeyMap";
 import Template from "./Template";
 import Output from "./Output";
 import H1 from "../H1";
+import ErrorBoundary from "../ErrorBoundary";
 import {
   PresetReducer,
   TemplateReducer,
@@ -96,4 +97,13 @@ function TemplatedGenerator() {
   );
 }
 
-export default TemplatedGenerator;
+export default (props) => (
+  <ErrorBoundary
+    CustomHandler={(resolve) => {
+      localStorage.removeItem("Presets");
+      resolve();
+    }}
+  >
+    <TemplatedGenerator {...props} />
+  </ErrorBoundary>
+);
