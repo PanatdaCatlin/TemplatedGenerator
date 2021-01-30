@@ -3,6 +3,7 @@ import dynamic from "next/dynamic";
 import H2 from "../../components/H2";
 import { downloadJSON, readJSON } from "../../hooks/useDownloadJSON";
 import TextareaAutosize from "react-textarea-autosize";
+import ErrorBoundary from "../ErrorBoundary";
 const Tour = dynamic(() => import("reactour"), { ssr: false });
 
 const steps = [
@@ -49,9 +50,7 @@ const Template = function ({
 
       <div className="row flex-grow padded-half">
         <div className="template-list column padded flex-start">
-          <div
-            className="wide row white flex-start "
-          >
+          <div className="wide row white flex-start ">
             <input
               className="wide"
               type="text"
@@ -223,7 +222,7 @@ const Template = function ({
           <input
             style={{ marginRight: "20px" }}
             type="button"
-            value="Update"
+            value="Save Changes"
             onClick={() =>
               presetDispatch({
                 type: "preset/template/update",
@@ -241,5 +240,21 @@ const Template = function ({
     </div>
   );
 };
-
-export default Template;
+export default (props) => (
+  <ErrorBoundary
+    CustomHandler={({ resolve }) => {
+      return (
+        <input
+          type="button"
+          value="reset"
+          onClick={() => {
+            props.presetDispatch({ type: "preset/reset", value: props });
+            resolve();
+          }}
+        />
+      );
+    }}
+  >
+    <Template {...props} />
+  </ErrorBoundary>
+);

@@ -5,6 +5,8 @@ import H2 from "../H2";
 
 import "react-tagsinput/react-tagsinput.css"; // If using WebPack and style-loader.
 import TagsInput from "react-tagsinput";
+import TemplatedGenerator from "./template-generator";
+import ErrorBoundary from "../ErrorBoundary";
 
 const Tour = dynamic(() => import("reactour"), { ssr: false });
 
@@ -48,10 +50,11 @@ const KeyMap = function ({
     keyMapDispatch({ type: "key/add", value: newKey });
     setNewKey("");
   };
-  const keyMapEdited = useMemo(
+
+  const isEdited = useMemo(
     () =>
       JSON.stringify(keyMapStore.keyMap) !==
-      JSON.stringify(presetStore.KeyMapStates[keyMapStore.name].keyMap),
+      JSON.stringify(presetStore.KeyMapStates[keyMapStore.name]?.keyMap),
     [keyMapStore, presetStore]
   );
   const [isTourOpen, setIsTourOpen] = useState(false);
@@ -83,14 +86,14 @@ const KeyMap = function ({
             }}
           >
             {Object.keys(presetStore.KeyMapStates)
-              .filter(
+              ?.filter(
                 (presetName) =>
                   !keyMapFilter ||
                   presetName
                     .toLowerCase()
                     .indexOf(keyMapFilter.toLowerCase()) >= 0
               )
-              .map((presetName) => {
+              ?.map((presetName) => {
                 return (
                   <div
                     className={`row flex-space-between bordered-b ${
@@ -229,7 +232,7 @@ const KeyMap = function ({
             </tr>
           </thead>
           <tbody>
-            {Object.keys(keyMapStore.keyMap).map((key) => {
+            {Object.keys(keyMapStore?.keyMap)?.map((key) => {
               return (
                 <tr key={key}>
                   <td className="bordered-r bordered-b">
@@ -270,11 +273,21 @@ const KeyMap = function ({
                   <td className="row flex-grow bordered-b">
                     <TagsInput
                       className="row flex-grow flex-end"
-                      value={keyMapStore.keyMap[key]}
-                      onChange={(value) =>
+                      value={
+                        keyMapStore?.keyMap?.[key]?.map
+                          ? keyMapStore?.keyMap?.[key]
+                          : []
+                      }
+                      onChange={(val) =>
                         keyMapDispatch({
                           type: "key/update",
-                          value: { [key]: value },
+                          value: {
+                            [key]: val.reduce((collection, string) => {
+                              const splitString = string.split(", ");
+                              collection.push(...splitString);
+                              return collection;
+                            }, []),
+                          },
                         })
                       }
                       onlyUnique
@@ -287,7 +300,7 @@ const KeyMap = function ({
               <td className="row keyentry-create">
                 <input
                   type="text"
-                  className="flexGrow "
+                  className="flexGrow"
                   value={newKey}
                   onChange={({ target: { value } }) => setNewKey(value)}
                   onKeyPress={({ code }) => code === "Enter" && addKey()}
@@ -306,11 +319,11 @@ const KeyMap = function ({
       </div>
 
       <div className="row flex-end ">
-        {keyMapEdited && (
+        {isEdited && (
           <input
             style={{ marginRight: "20px" }}
             type="button"
-            value="Update"
+            value="Save Changes"
             onClick={() =>
               presetDispatch({
                 type: "preset/key/update",
@@ -329,4 +342,21 @@ const KeyMap = function ({
   );
 };
 
-export default KeyMap;
+export default (props) => (
+  <ErrorBoundary
+    CustomHandler={({ resolve }) => {
+      return (
+        <input
+          type="button"
+          value="reset"
+          onClick={() => {
+            props.presetDispatch({ type: "preset/reset", value: props });
+            resolve();
+          }}
+        />
+      );
+    }}
+  >
+    <KeyMap {...props} />
+  </ErrorBoundary>
+);

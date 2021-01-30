@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { basePath } from "../next.config";
+import { basePath } from "../../next.config";
 import createPersistedState from "use-persisted-state";
 const usePersistedCities = createPersistedState("cities");
 const usePersistedServices = createPersistedState("services");
@@ -11,10 +11,10 @@ const usePersistedContentTemplate = createPersistedState("content-template");
 import { Button, Form, Header, Card, Grid } from "semantic-ui-react";
 import "react-tagsinput/react-tagsinput.css"; // If using WebPack and style-loader.
 import TagsInput from "react-tagsinput";
-import TemplateCard from "../components/TemplateCard";
-import H1 from "../components/H1";
+import TemplateCard from "../TemplateCard";
+import H1 from "../H1";
 import { Tab } from "semantic-ui-react";
-import Nav from "../components/Nav";
+import Nav from "../Nav";
 
 export default function Home() {
   const [cities, setCities] = usePersistedCities([]);
@@ -92,9 +92,7 @@ export default function Home() {
   });
 
   return (
-    <div className="view-wrapper">
-      <Nav title=" City Service Content Generator" />
-
+    <>
       <H1 dark text="Service & City" />
       <div className="row flex-wrap">
         <div
@@ -104,10 +102,13 @@ export default function Home() {
           <Header as="h2" content="Inputs" textAlign="center" />
           <Form>
             <div className="row flex-wrap">
-              <div className="padded" style={{ minWidth: "300px", maxWidth: "50%" }}>
+              <div
+                className="padded"
+                style={{ minWidth: "300px", maxWidth: "50%" }}
+              >
                 <h3>Cities</h3>
                 <TagsInput
-                  value={cities}
+                  value={cities.map ? cities : []}
                   onChange={(val) =>
                     setCities(
                       val.reduce((collection, string) => {
@@ -121,10 +122,13 @@ export default function Home() {
                   onlyUnique
                 />
               </div>
-              <div className="padded" style={{ minWidth: "300px", maxWidth: "50%" }}>
+              <div
+                className="padded"
+                style={{ minWidth: "300px", maxWidth: "50%" }}
+              >
                 <h3>Services</h3>
                 <TagsInput
-                  value={services}
+                  value={services?.map ? service : []}
                   onChange={(val) =>
                     setServices(
                       val.reduce((collection, string) => {
@@ -218,7 +222,7 @@ export default function Home() {
           </div>
         )}
       </div>
-    </div>
+    </>
   );
 }
 
