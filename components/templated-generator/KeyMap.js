@@ -50,14 +50,11 @@ const KeyMap = function ({
     keyMapDispatch({ type: "key/add", value: newKey });
     setNewKey("");
   };
-  console.log({
-    keyMap: keyMapStore.keyMap,
-    store: presetStore.KeyMapStates[keyMapStore.name].keyMap,
-  });
+
   const isEdited = useMemo(
     () =>
       JSON.stringify(keyMapStore.keyMap) !==
-      JSON.stringify(presetStore.KeyMapStates[keyMapStore.name].keyMap),
+      JSON.stringify(presetStore.KeyMapStates[keyMapStore.name]?.keyMap),
     [keyMapStore, presetStore]
   );
   const [isTourOpen, setIsTourOpen] = useState(false);
@@ -89,14 +86,14 @@ const KeyMap = function ({
             }}
           >
             {Object.keys(presetStore.KeyMapStates)
-              .filter(
+              ?.filter(
                 (presetName) =>
                   !keyMapFilter ||
                   presetName
                     .toLowerCase()
                     .indexOf(keyMapFilter.toLowerCase()) >= 0
               )
-              .map((presetName) => {
+              ?.map((presetName) => {
                 return (
                   <div
                     className={`row flex-space-between bordered-b ${
@@ -235,7 +232,7 @@ const KeyMap = function ({
             </tr>
           </thead>
           <tbody>
-            {Object.keys(keyMapStore.keyMap).map((key) => {
+            {Object.keys(keyMapStore?.keyMap)?.map((key) => {
               return (
                 <tr key={key}>
                   <td className="bordered-r bordered-b">
@@ -276,16 +273,21 @@ const KeyMap = function ({
                   <td className="row flex-grow bordered-b">
                     <TagsInput
                       className="row flex-grow flex-end"
-                      value={keyMapStore.keyMap[key]}
-            
+                      value={
+                        keyMapStore?.keyMap?.[key]?.map
+                          ? keyMapStore?.keyMap?.[key]
+                          : []
+                      }
                       onChange={(val) =>
                         keyMapDispatch({
                           type: "key/update",
-                          value: { [key]: val.reduce((collection, string) => {
-                            const splitString = string.split(", ");
-                            collection.push(...splitString);
-                            return collection;
-                          }, []) },
+                          value: {
+                            [key]: val.reduce((collection, string) => {
+                              const splitString = string.split(", ");
+                              collection.push(...splitString);
+                              return collection;
+                            }, []),
+                          },
                         })
                       }
                       onlyUnique
@@ -298,7 +300,7 @@ const KeyMap = function ({
               <td className="row keyentry-create">
                 <input
                   type="text"
-                  className="flexGrow "
+                  className="flexGrow"
                   value={newKey}
                   onChange={({ target: { value } }) => setNewKey(value)}
                   onKeyPress={({ code }) => code === "Enter" && addKey()}
@@ -342,7 +344,7 @@ const KeyMap = function ({
 
 export default (props) => (
   <ErrorBoundary
-    CustomHandler={({resolve}) => {
+    CustomHandler={({ resolve }) => {
       return (
         <input
           type="button"

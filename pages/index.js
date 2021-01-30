@@ -1,5 +1,5 @@
 import Link from "next/link";
-import React, { useState, useRef, useEffect } from "react";
+import React from "react";
 import Nav from "../components/Nav";
 import { useRouter } from "next/router";
 
@@ -11,12 +11,12 @@ const routeMap = {
   "city-tool": CityTool,
   "template-generator": TemplateGenerator,
 };
+
 export default function Home(props) {
   const router = useRouter();
   const {
     query: { tool },
   } = router;
-  console.log({tool})
   return (
     <div className="view-wrapper">
       <Nav title="Workflow Enhancement Tools" home={!tool}></Nav>

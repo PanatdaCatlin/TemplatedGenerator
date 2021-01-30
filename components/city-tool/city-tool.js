@@ -108,7 +108,7 @@ export default function Home() {
               >
                 <h3>Cities</h3>
                 <TagsInput
-                  value={cities}
+                  value={cities.map ? cities : []}
                   onChange={(val) =>
                     setCities(
                       val.reduce((collection, string) => {
@@ -128,7 +128,7 @@ export default function Home() {
               >
                 <h3>Services</h3>
                 <TagsInput
-                  value={services}
+                  value={services?.map ? service : []}
                   onChange={(val) =>
                     setServices(
                       val.reduce((collection, string) => {
