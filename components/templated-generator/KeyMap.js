@@ -277,10 +277,15 @@ const KeyMap = function ({
                     <TagsInput
                       className="row flex-grow flex-end"
                       value={keyMapStore.keyMap[key]}
-                      onChange={(value) =>
+            
+                      onChange={(val) =>
                         keyMapDispatch({
                           type: "key/update",
-                          value: { [key]: value },
+                          value: { [key]: val.reduce((collection, string) => {
+                            const splitString = string.split(", ");
+                            collection.push(...splitString);
+                            return collection;
+                          }, []) },
                         })
                       }
                       onlyUnique
