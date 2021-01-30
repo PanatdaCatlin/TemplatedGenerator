@@ -223,7 +223,7 @@ const Template = function ({
           <input
             style={{ marginRight: "20px" }}
             type="button"
-            value="Update"
+            value="Save Changes"
             onClick={() =>
               presetDispatch({
                 type: "preset/template/update",

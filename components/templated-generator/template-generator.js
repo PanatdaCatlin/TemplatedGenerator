@@ -1,12 +1,10 @@
 import React, { useReducer, useState, useRef, useEffect, useMemo } from "react";
 import dynamic from "next/dynamic";
-import Nav from "../components/Nav";
-import KeyMap from "../components/templated-generator/KeyMap";
-import Template from "../components/templated-generator/Template";
-import Output from "../components/templated-generator/Output";
-import H1 from "../components/H1";
-import H2 from "../components/H2";
-import TextareaAutosize from "react-textarea-autosize";
+import Nav from "../Nav";
+import KeyMap from "./KeyMap";
+import Template from "./Template";
+import Output from "./Output";
+import H1 from "../H1";
 import {
   PresetReducer,
   TemplateReducer,
@@ -14,7 +12,7 @@ import {
   TemplateState,
   KeyMapState,
   PresetState,
-} from "../reducers/templated-generator";
+} from "../../reducers/templated-generator";
 const Tour = dynamic(() => import("reactour"), { ssr: false });
 
 const steps = [
@@ -46,9 +44,7 @@ function TemplatedGenerator() {
   const [presetStore, presetDispatch] = useReducer(PresetReducer, PresetState);
 
   return (
-    <div className="view-wrapper">
-      <Nav title="City Service Content Generator" />
-
+    <>
       <H1
         text="Live Template Constructor"
         dark
@@ -96,7 +92,7 @@ function TemplatedGenerator() {
         isOpen={isTourOpen}
         onRequestClose={() => setIsTourOpen(false)}
       />
-    </div>
+    </>
   );
 }
 

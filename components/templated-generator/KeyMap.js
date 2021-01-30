@@ -48,7 +48,11 @@ const KeyMap = function ({
     keyMapDispatch({ type: "key/add", value: newKey });
     setNewKey("");
   };
-  const keyMapEdited = useMemo(
+  console.log({
+    keyMap: keyMapStore.keyMap,
+    store: presetStore.KeyMapStates[keyMapStore.name].keyMap,
+  });
+  const isEdited = useMemo(
     () =>
       JSON.stringify(keyMapStore.keyMap) !==
       JSON.stringify(presetStore.KeyMapStates[keyMapStore.name].keyMap),
@@ -306,11 +310,11 @@ const KeyMap = function ({
       </div>
 
       <div className="row flex-end ">
-        {keyMapEdited && (
+        {isEdited && (
           <input
             style={{ marginRight: "20px" }}
             type="button"
-            value="Update"
+            value="Save Changes"
             onClick={() =>
               presetDispatch({
                 type: "preset/key/update",

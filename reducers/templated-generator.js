@@ -55,7 +55,7 @@ function PresetReducer(state, action) {
     }
     case "preset/key/update": {
       const { keyMap, name } = value;
-      state.KeyMapStates[name].keyMap = keyMap;
+      state.KeyMapStates[name].keyMap = JSON.parse(JSON.stringify(keyMap));
       break;
     }
     case "preset/key/add": {
