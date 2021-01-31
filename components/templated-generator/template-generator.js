@@ -1,6 +1,4 @@
 import React, { useReducer, useState, useRef, useEffect, useMemo } from "react";
-import dynamic from "next/dynamic";
-import Nav from "../Nav";
 import KeyMap from "./KeyMap";
 import Template from "./Template";
 import Output from "./Output";
@@ -10,28 +8,11 @@ import {
   PresetReducer,
   TemplateReducer,
   KeyMapReducer,
-  TemplateState,
-  KeyMapState,
-  PresetState,
-} from "../../reducers/templated-generator";
-const Tour = dynamic(() => import("reactour"), { ssr: false });
-
-const steps = [
-  {
-    selector: ".inputs",
-    content: "Create templated outputs by pairing a Key-Map with a Template.",
-  },
-  {
-    selector: ".template-container",
-    content:
-      "Inside the Template, use {{ }} to wrap Keys. The Output will replace your {{ }} with the values provided for that Key",
-  },
-  {
-    selector: ".keymap-container",
-    content:
-      "Add and Remove Keys which will match and replace {{ }} areas of the Template",
-  },
-];
+  GetTemplateInitialState,
+  GetKeyMapInitialState,
+  GetPresetIntitialState,
+} from "./reducers";
+import Tour from "./Tour";
 
 function TemplatedGenerator() {
   const [isTourOpen, setIsTourOpen] = useState(false);
@@ -39,10 +20,16 @@ function TemplatedGenerator() {
 
   const [templateStore, templateDispatch] = useReducer(
     TemplateReducer,
-    TemplateState
+    GetTemplateInitialState()
   );
-  const [keyMapStore, keyMapDispatch] = useReducer(KeyMapReducer, KeyMapState);
-  const [presetStore, presetDispatch] = useReducer(PresetReducer, PresetState);
+  const [keyMapStore, keyMapDispatch] = useReducer(
+    KeyMapReducer,
+    GetKeyMapInitialState()
+  );
+  const [presetStore, presetDispatch] = useReducer(
+    PresetReducer,
+    GetPresetIntitialState()
+  );
 
   return (
     <>
@@ -88,11 +75,7 @@ function TemplatedGenerator() {
         <Output {...{ templateStore, keyMapStore }} />
       </div>
 
-      <Tour
-        steps={steps}
-        isOpen={isTourOpen}
-        onRequestClose={() => setIsTourOpen(false)}
-      />
+      <Tour {...{ isTourOpen, setIsTourOpen }}></Tour>
     </>
   );
 }
