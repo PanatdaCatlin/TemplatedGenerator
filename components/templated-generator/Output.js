@@ -44,8 +44,9 @@ const Output = function ({ templateStore, keyMapStore }) {
     let output = templateStore.template;
     Object.keys(keyMapStore.keyMap).forEach((key) => {
       const value = keyMapStore.keyMap[key];
-      if (key && value && output && output.replaceAll) {
-        output = output.replaceAll(`{{${key}}}`, selected[key]);
+
+      if (key && value && output && output.replaceAll ) {
+        output = output.replaceAll(`{{${key}}}`, () => selected[key] || key);
       }
     });
 
@@ -67,20 +68,21 @@ const Output = function ({ templateStore, keyMapStore }) {
                     overflowY: "auto",
                   }}
                 >
-                  {keyMapStore?.keyMap?.[key]?.map && keyMapStore?.keyMap?.[key]?.map((value) => {
-                    return (
-                      <div
-                        onClick={() =>
-                          setSelected({ ...selected, [key]: value })
-                        }
-                        className={`row ${
-                          selected[key] === value ? "lightgrey" : ""
-                        }`}
-                      >
-                        {value}
-                      </div>
-                    );
-                  })}
+                  {keyMapStore?.keyMap?.[key]?.map &&
+                    keyMapStore?.keyMap?.[key]?.map((value) => {
+                      return (
+                        <div
+                          onClick={() =>
+                            setSelected({ ...selected, [key]: value })
+                          }
+                          className={`row ${
+                            selected[key] === value ? "lightgrey" : ""
+                          }`}
+                        >
+                          {value}
+                        </div>
+                      );
+                    })}
                 </div>
               </div>
             );

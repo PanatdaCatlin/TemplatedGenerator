@@ -1,4 +1,4 @@
-import React, { useReducer, useState, useRef, useEffect, useMemo } from "react";
+import React, { useReducer, useState } from "react";
 import KeyMap from "./KeyMap";
 import Template from "./Template";
 import Output from "./Output";
@@ -44,7 +44,7 @@ function TemplatedGenerator() {
           style={{
             color: "white",
             backgroundColor: "red",
-            fontSize: "30px",
+            fontSize: "16px",
             textAlign: "center",
           }}
           className="half-padded rounded"
@@ -61,6 +61,30 @@ function TemplatedGenerator() {
             }
           }}
         ></input>
+        {really && (
+          <input
+            type="text"
+            style={{
+              color: "black",
+              backgroundColor: "yellow",
+              fontSize: "16px",
+              textAlign: "center",
+            }}
+            className="half-padded rounded"
+            value={"Cancel"}
+            onClick={() => {
+              if (really) {
+                presetDispatch({
+                  type: "preset/reset",
+                  value: { keyMapDispatch, templateDispatch },
+                });
+                setReally(false);
+              } else {
+                setReally(true);
+              }
+            }}
+          ></input>
+        )}
       </div>
       <div className="inputs row padded flex-wrap">
         <KeyMap

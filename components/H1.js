@@ -1,16 +1,16 @@
 export default function H1({ text, dark, help }) {
   return (
     <div
-      className="row padded rounded"
+      className={`row big-padded rounded outlined elevated ${
+        dark ? "primary" : "primary-inverse"
+      }`}
       style={{
         height: "50px",
-        backgroundColor: dark ? "#232323" : "",
-        color: dark ? "white" : "black",
+        // backgroundColor: dark ? "#232323" : "",
+        // color: dark ? "white" : "black",
       }}
     >
-      <div className="row flex-grow">
-        <h1 className="column">{text}</h1>
-      </div>
+      <h1 className="column flex-grow text-center">{text}</h1>
       {help && (
         <div
           onClick={help}
