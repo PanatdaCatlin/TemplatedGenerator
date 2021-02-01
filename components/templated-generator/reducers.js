@@ -1,5 +1,5 @@
 const localStorage = global?.localStorage ?? { getItem: () => null };
-const localPresets = localStorage.getItem("Presets");
+
 const initial = {
   KeyMapStates: {
     Default: {
@@ -16,22 +16,27 @@ const initial = {
     },
   },
 };
-const PresetState =
-  localPresets !== null
+function GetPresetIntitialState() {
+  const localPresets = localStorage.getItem("Presets");
+
+  return localPresets !== null
     ? JSON.parse(localPresets)
     : JSON.parse(JSON.stringify(initial));
+}
 
-const KeyMapState = {
-  keyMap: JSON.parse(JSON.stringify(PresetState.KeyMapStates.Default.keyMap)),
-  name: "Default",
-};
-
-const TemplateState = {
-  template: JSON.parse(
-    JSON.stringify(PresetState.TemplateStates.Default.template)
+const GetKeyMapInitialState = () => ({
+  keyMap: JSON.parse(
+    JSON.stringify(GetPresetIntitialState().KeyMapStates.Default.keyMap)
   ),
   name: "Default",
-};
+});
+
+const GetTemplateInitialState = () => ({
+  template: JSON.parse(
+    JSON.stringify(GetPresetIntitialState().TemplateStates.Default.template)
+  ),
+  name: "Default",
+});
 
 function PresetReducer(state, action) {
   const { type, value } = action;
@@ -89,6 +94,8 @@ function PresetReducer(state, action) {
     }
     case "preset/reset": {
       const { keyMapDispatch = () => {}, templateDispatch = () => {} } = value;
+      localStorage.removeItem("Presets");
+
       state = JSON.parse(JSON.stringify(initial));
       keyMapDispatch({
         type: "key/load-from-preset",
@@ -165,7 +172,7 @@ export {
   TemplateReducer,
   KeyMapReducer,
   PresetReducer,
-  TemplateState,
-  KeyMapState,
-  PresetState,
+  GetTemplateInitialState,
+  GetKeyMapInitialState,
+  GetPresetIntitialState,
 };

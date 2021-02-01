@@ -1,6 +1,6 @@
 export default function H2({ text, help }) {
   return (
-    <div className="row lightgrey rounded">
+    <div className="row primary rounded elevated bordered overextend">
       <div className="row flex-grow">
         <h2>{text}</h2>
       </div>
