@@ -86,7 +86,7 @@ function TemplatedGenerator() {
           ></input>
         )}
       </div>
-      <div className="inputs row padded flex-wrap">
+      <div className="inputs row padded">
         <KeyMap
           {...{ presetStore, presetDispatch, keyMapStore, keyMapDispatch }}
         />
