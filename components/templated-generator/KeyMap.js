@@ -61,7 +61,7 @@ const KeyMap = function ({
 
   return (
     <div
-      className="keymap-container column padded elevated rounded bordered"
+      className="keymap-container column padded elevated rounded bordered flex-start"
       style={{ flexGrow: 1 }}
     >
       <H2 text={"KeyMap"} help={() => setIsTourOpen(true)}></H2>

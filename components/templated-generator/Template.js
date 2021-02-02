@@ -43,8 +43,8 @@ const Template = function ({
   const [isTourOpen, setIsTourOpen] = useState(false);
   return (
     <div
-      className="template-container column  padded rounded elevated bordered"
-      style={{ flexGrow: 3 }}
+    className="keymap-container column padded elevated rounded bordered flex-start"
+    style={{ flexGrow: 3 }}
     >
       <H2 text="Template" help={() => setIsTourOpen(true)} />
 
