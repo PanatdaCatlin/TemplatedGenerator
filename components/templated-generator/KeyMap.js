@@ -65,8 +65,8 @@ const KeyMap = function ({
       style={{ flexGrow: 1 }}
     >
       <H2 text={"KeyMap"} help={() => setIsTourOpen(true)}></H2>
-      <div className="row flex-grow">
-        <div className="column keymap-list padded flex-start tall">
+      <div className="row flex-grow flex-wrap">
+        <div className="column keymap-list padded flex-start">
           <div className="wide row white flex-start ">
             <input
               className="wide"
@@ -132,12 +132,13 @@ const KeyMap = function ({
                             >{`❌`}</div>
                             <div
                               className="column"
-                              onClick={() =>
+                              onClick={() => {
                                 presetDispatch({
                                   type: "preset/key/delete",
                                   value: presetName,
-                                })
-                              }
+                                });
+                                setConfirmKill(null);
+                              }}
                             >{`✅ `}</div>
                           </div>
                         )}
@@ -224,7 +225,7 @@ const KeyMap = function ({
           </div>
         </div>
 
-        <table className="keymap-table table padded wide  ">
+        <table className=" keymap-table table padded ">
           <thead className="lightgrey">
             <tr>
               <th className="bordered-r bordered-b">Keys</th>
@@ -257,12 +258,13 @@ const KeyMap = function ({
                               >{`❌`}</div>
                               <div
                                 className="column"
-                                onClick={() =>
+                                onClick={() => {
                                   keyMapDispatch({
                                     type: "key/delete",
                                     value: key,
-                                  })
-                                }
+                                  });
+                                  setConfirmKillKey(null);
+                                }}
                               >{`✅ `}</div>
                             </div>
                           )}
@@ -320,17 +322,31 @@ const KeyMap = function ({
 
       <div className="row flex-end ">
         {isEdited && (
-          <input
-            style={{ marginRight: "20px" }}
-            type="button"
-            value="Save Changes"
-            onClick={() =>
-              presetDispatch({
-                type: "preset/key/update",
-                value: keyMapStore,
-              })
-            }
-          ></input>
+          <div className="row flex-end outlined elevated rounded ">
+            <span className="half-padded">{`* edited`}</span>
+            <input
+             className="rounded hoverable half-padded"
+             type="button"
+              value="Revert Changes"
+              onClick={() =>
+                keyMapDispatch({
+                  type: "key/load-from-preset",
+                  value: { presetStore, name: keyMapStore.name },
+                })
+              }
+            ></input>
+            <input
+             className="rounded primary hoverable half-padded"
+             type="button"
+              value="Save Changes"
+              onClick={() =>
+                presetDispatch({
+                  type: "preset/key/update",
+                  value: keyMapStore,
+                })
+              }
+            ></input>
+          </div>
         )}
       </div>
       <Tour
