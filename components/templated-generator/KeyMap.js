@@ -237,7 +237,7 @@ const KeyMap = function ({
                 <tr key={key}>
                   <td className="bordered-r bordered-b">
                     <div className="row flex-space-between">
-                      <div className="column">{`{{ ${key} }}`}</div>
+                      <div className="column">{`{{${key}}}`}</div>
                       <div className="column">
                         <>
                           {confirmKillKey !== key && (
