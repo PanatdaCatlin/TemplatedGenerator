@@ -33,7 +33,7 @@ const Template = function ({
   const [templateFilter, setTemplateFilter] = useState("");
   const [confirmKill, setConfirmKill] = useState(null);
   const templateFileInput = useRef();
-  const templateEdited = useMemo(
+  const isEdited = useMemo(
     () =>
       templateStore.template !==
       presetStore.TemplateStates[templateStore.name].template,
@@ -44,11 +44,11 @@ const Template = function ({
   return (
     <div
       className="template-container column  padded rounded elevated bordered"
-      style={{ flexGrow: 5 }}
+      style={{ flexGrow: 3 }}
     >
       <H2 text="Template" help={() => setIsTourOpen(true)} />
 
-      <div className="row flex-grow padded-half">
+      <div className="row padded-half flex-wrap">
         <div className="template-list column padded flex-start">
           <div className="wide row white flex-start ">
             <input
@@ -209,7 +209,8 @@ const Template = function ({
         <TextareaAutosize
           type="textarea"
           minRows={5}
-          className="padded rounded elevated flex-grow template-text"
+          className="padded rounded elevated flex-grow template-text column"
+          style={{minWidth:'400px'}}
           value={templateStore.template}
           onChange={({ target: { value } }) =>
             templateDispatch({ type: "template/update", value })
@@ -218,18 +219,34 @@ const Template = function ({
         ></TextareaAutosize>
       </div>
       <div className="row flex-end">
-        {templateEdited && (
-          <input
-            style={{ marginRight: "20px" }}
-            type="button"
-            value="Save Changes"
-            onClick={() =>
-              presetDispatch({
-                type: "preset/template/update",
-                value: templateStore,
-              })
-            }
-          ></input>
+        {isEdited && (
+          <div className="row flex-end outlined elevated rounded ">
+            <span className="half-padded">{`* edited`}</span>
+            <input
+             className="rounded hoverable half-padded"
+              type="button"
+              value="Revert Changes"
+              onClick={() =>
+                templateDispatch({
+                  type: "template/load-from-preset",
+                  value: { presetStore, name: templateStore.name },
+                })
+              }
+            ></input>
+
+            <input
+            
+              className="rounded primary hoverable half-padded"
+              type="button"
+              value="Save Changes"
+              onClick={() =>
+                presetDispatch({
+                  type: "preset/template/update",
+                  value: templateStore,
+                })
+              }
+            ></input>
+          </div>
         )}
       </div>
       <Tour
