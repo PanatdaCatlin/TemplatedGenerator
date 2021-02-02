@@ -38,7 +38,7 @@ function TemplatedGenerator() {
         dark
         help={() => setIsTourOpen(true)}
       />
-      <div className="row flex-end">
+      <div className="row flex-end " style={{marginRight:'20px'}}>
         <input
           type="text"
           style={{
