@@ -13,6 +13,7 @@ import {
   GetPresetIntitialState,
 } from "./reducers";
 import Tour from "./Tour";
+import OutputAll from "./OutputAll";
 
 function TemplatedGenerator() {
   const [isTourOpen, setIsTourOpen] = useState(false);
@@ -95,8 +96,12 @@ function TemplatedGenerator() {
         />
       </div>
 
-      <div className="inputs row padded flex-start">
+      <div className="row padded flex-start">
         <Output {...{ templateStore, keyMapStore }} />
+      </div>
+
+      <div className="row padded flex-start">
+        <OutputAll {...{ templateStore, keyMapStore }} />
       </div>
 
       <Tour {...{ isTourOpen, setIsTourOpen }}></Tour>
