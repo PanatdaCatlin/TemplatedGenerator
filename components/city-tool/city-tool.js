@@ -1,5 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import { basePath } from "../../next.config";
+import TextareaAutosize from "react-textarea-autosize";
+
 import createPersistedState from "use-persisted-state";
 const usePersistedCities = createPersistedState("cities");
 const usePersistedServices = createPersistedState("services");
@@ -92,7 +94,7 @@ export default function Home() {
     };
   });
   panes.unshift({
-    menuItem: "all",
+    menuItem: "All",
     render: () => OutputAll({ titleOutput, descriptionOutput, contentOutput }),
   });
 
@@ -231,30 +233,75 @@ export default function Home() {
   );
 }
 function OutputAll({ titleOutput, descriptionOutput, contentOutput }) {
+  const titles = [];
+  const descriptions = [];
+  const contents = [];
+  Object.keys(titleOutput).map((city) => {
+    Object.keys(titleOutput[city]).map((service) => {
+      titles.push(titleOutput[city][service]);
+      descriptions.push(descriptionOutput[city][service]);
+      contents.push(contentOutput[city][service]);
+    });
+  });
   return (
-    <div className="column padded bordered rounded">
-      {Object.keys(titleOutput).map((city, i) => {
-        return (
-          <div key={city} className="column bordered padded">
-            <H2 text={city} />
-
-            <div className="row flex-wrap">
-              {Object.keys(titleOutput[city]).map((service, index) => {
-                return (
-                  <TemplateCard
-                    index={(index += 1)}
-                    city={city}
-                    service={service}
-                    title={titleOutput[city][service]}
-                    description={descriptionOutput[city][service]}
-                    content={contentOutput[city][service]}
-                  />
-                );
-              })}
-            </div>
-          </div>
-        );
-      })}
+    <div className="column">
+      <div className="column">
+        <div className="row">
+          <button
+            onClick={() => {
+              getElementById("titleOutputs").select().copy();
+            }}
+          >
+            Copy Titles
+          </button>
+        </div>
+        <TextareaAutosize
+          id="titleOutputs"
+          type="textarea"
+          minRows={1}
+          className="padded rounded elevated flex-grow"
+          value={titles.join("\n")}
+          placeholder=""
+        ></TextareaAutosize>
+      </div>
+      <div className="column">
+        <div className="row">
+          <button
+            onClick={() => {
+              getElementById("titleOutputs").select().copy();
+            }}
+          >
+            Copy Descriptions
+          </button>
+        </div>
+        <TextareaAutosize
+          id="descriptionOutputs"
+          type="textarea"
+          minRows={1}
+          className="padded rounded elevated flex-grow"
+          value={descriptions.join("\n")}
+          placeholder=""
+        ></TextareaAutosize>
+      </div>
+      <div className="column">
+        <div className="row">
+          <button
+            onClick={() => {
+              getElementById("contentsOutputs").select().copy();
+            }}
+          >
+            Copy Contents
+          </button>
+        </div>
+        <TextareaAutosize
+          id="contentsOutputs"
+          type="textarea"
+          minRows={1}
+          className="padded rounded elevated flex-grow"
+          value={contents.join("\n")}
+          placeholder=""
+        ></TextareaAutosize>
+      </div>
     </div>
   );
 }
