@@ -13,6 +13,7 @@ import "react-tagsinput/react-tagsinput.css"; // If using WebPack and style-load
 import TagsInput from "react-tagsinput";
 import TemplateCard from "../TemplateCard";
 import H1 from "../H1";
+import H2 from "../H2";
 import { Tab } from "semantic-ui-react";
 import Nav from "../Nav";
 
@@ -90,13 +91,17 @@ export default function Home() {
       ),
     };
   });
+  panes.unshift({
+    menuItem: "all",
+    render: () => OutputAll({ titleOutput, descriptionOutput, contentOutput }),
+  });
 
   return (
     <>
       <H1 dark text="Service & City" />
       <div className="row flex-wrap">
         <div
-          className="inputs column outlined roundedpadded elevated flex-grow"
+          className="inputs column outlined rounded padded elevated flex-grow"
           style={{ minWidth: "500px" }}
         >
           <Header as="h2" content="Inputs" textAlign="center" />
@@ -176,7 +181,7 @@ export default function Home() {
                 />
               </div>
             </div>
-            <div className="rowpadded elevated rounded">
+            <div className="row padded elevated rounded">
               <Button positive onClick={GenerateOutput}>
                 {titleOutput && Object.keys(titleOutput).length > 0
                   ? "Regenerate Outputs"
@@ -202,12 +207,12 @@ export default function Home() {
         </div>
         {titleOutput && Object.keys(titleOutput).length > 0 && (
           <div
-            className="outputs outlined rounded columnpadded elevated flex-grow"
+            className="outputs outlined rounded column padded elevated flex-grow"
             style={{ minWidth: "500px" }}
           >
             <Header as="h2" content="Outputs" textAlign="center" />
 
-            <div className="columnpadded elevated">
+            <div className="column padded elevated">
               <Tab
                 menu={{
                   fluid: true,
@@ -225,7 +230,34 @@ export default function Home() {
     </>
   );
 }
+function OutputAll({ titleOutput, descriptionOutput, contentOutput }) {
+  return (
+    <div className="column padded bordered rounded">
+      {Object.keys(titleOutput).map((city, i) => {
+        return (
+          <div key={city} className="column bordered padded">
+            <H2 text={city} />
 
+            <div className="row flex-wrap">
+              {Object.keys(titleOutput[city]).map((service, index) => {
+                return (
+                  <TemplateCard
+                    index={(index += 1)}
+                    city={city}
+                    service={service}
+                    title={titleOutput[city][service]}
+                    description={descriptionOutput[city][service]}
+                    content={contentOutput[city][service]}
+                  />
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 function CityService({ city, titleOutput, descriptionOutput, contentOutput }) {
   const panes = Object.keys(titleOutput[city]).map((service, index) => {
     return {
