@@ -7,8 +7,8 @@ const EditableCardContent = React.forwardRef(function (props, ref) {
     <div className="column pt">
       <h3 className="row flex-start">{name}</h3>
       <textarea
-        className="row wide"
-        style={{minHeight:'150px', minWidth:'500px'}}
+        className="row"
+        style={{minHeight:'100px', minWidth:'200px'}}
         ref={ref}
         value={state}
         onChange={(ev) => {

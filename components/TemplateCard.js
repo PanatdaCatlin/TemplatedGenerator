@@ -56,21 +56,23 @@ export default function TemplateCard({
     },
   ];
   return (
-    <div className="column padded elevated wide" >
-      <h2 className="row">{`Service: ${service}`}</h2>
-      {edited && (
-        <button
-          className="row pt"
-          onClick={() => {
-            setDisplayTitle(title);
-            setDisplayDescription(description);
-            setDisplayContent(content);
-            setEdited(false);
-          }}
-        >
-          Revert Changes
-        </button>
-      )}
+    <div className="column padded elevated flex-shrink flex-grow" style={{maxWidth:'400px'}}>
+      <div className="row flex-space-between">
+        <h2 >{`Service: ${service}`}</h2>
+        {edited && (
+          <button
+          
+            onClick={() => {
+              setDisplayTitle(title);
+              setDisplayDescription(description);
+              setDisplayContent(content);
+              setEdited(false);
+            }}
+          >
+            Revert Changes
+          </button>
+        )}
+      </div>
       {fields.map(({ name, state, ref, setter, copied, copiedSetter }) => (
         <EditableCardContent
           {...{
