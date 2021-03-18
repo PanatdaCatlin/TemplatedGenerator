@@ -249,7 +249,8 @@ function OutputAll({ titleOutput, descriptionOutput, contentOutput }) {
         <div className="row">
           <button
             onClick={() => {
-              getElementById("titleOutputs").select().copy();
+              document.getElementById("titleOutputs").select();
+              document.execCommand("copy");
             }}
           >
             Copy Titles
@@ -268,7 +269,8 @@ function OutputAll({ titleOutput, descriptionOutput, contentOutput }) {
         <div className="row">
           <button
             onClick={() => {
-              getElementById("titleOutputs").select().copy();
+              document.getElementById("descriptionOutputs").select();
+              document.execCommand("copy");
             }}
           >
             Copy Descriptions
@@ -287,7 +289,8 @@ function OutputAll({ titleOutput, descriptionOutput, contentOutput }) {
         <div className="row">
           <button
             onClick={() => {
-              getElementById("contentsOutputs").select().copy();
+              document.getElementById("contentsOutputs").select();
+              document.execCommand("copy");
             }}
           >
             Copy Contents
