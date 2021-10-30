@@ -4,7 +4,7 @@ import { downloadJSON } from "../../hooks/useDownloadJSON";
 
 import TextareaAutosize from "react-textarea-autosize";
 import H2 from "../H2";
-import ErrorBoundary from "../ErrorBoundary";
+import ErrorBoundry from "../ErrorBoundry";
 import KeyMap from "./KeyMap";
 const Tour = dynamic(() => import("reactour"), { ssr: false });
 
@@ -97,7 +97,7 @@ const OutputAll = function ({ templateStore, keyMapStore }) {
 };
 
 export default (props) => (
-  <ErrorBoundary
+  <ErrorBoundry
     CustomHandler={({ resolve }) => {
       return (
         <input
@@ -111,5 +111,5 @@ export default (props) => (
     }}
   >
     <OutputAll {...props} />
-  </ErrorBoundary>
+  </ErrorBoundry>
 );

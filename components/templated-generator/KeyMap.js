@@ -6,7 +6,7 @@ import H2 from "../H2";
 import "react-tagsinput/react-tagsinput.css"; // If using WebPack and style-loader.
 import TagsInput from "react-tagsinput";
 import TemplatedGenerator from "./template-generator";
-import ErrorBoundary from "../ErrorBoundary";
+import ErrorBoundry from "../ErrorBoundry";
 
 const Tour = dynamic(() => import("reactour"), { ssr: false });
 
@@ -359,7 +359,7 @@ const KeyMap = function ({
 };
 
 export default (props) => (
-  <ErrorBoundary
+  <ErrorBoundry
     CustomHandler={({ resolve }) => {
       return (
         <input
@@ -374,5 +374,5 @@ export default (props) => (
     }}
   >
     <KeyMap {...props} />
-  </ErrorBoundary>
+  </ErrorBoundry>
 );
