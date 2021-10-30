@@ -6,10 +6,12 @@ import { useRouter } from "next/router";
 import { basePath } from "../next.config";
 import CityTool from "../components/city-tool/city-tool";
 import TemplateGenerator from "../components/templated-generator/template-generator";
+import {SQLWorkflow} from "../components/sql-workflow";
 
 const routeMap = {
   "city-tool": CityTool,
   "template-generator": TemplateGenerator,
+  "sql-workflow": SQLWorkflow
 };
 
 export default function Home(props) {
@@ -24,7 +26,7 @@ export default function Home(props) {
       {!tool && (
         <div className="column pt">
           <div className="row">
-            <div className="row thin padded elevated rounded">
+            <div className="row thin padded elevated rounded flex-wrap">
               <Link href="?tool=city-tool">
                 <div className="column padded elevated rounded outlined hoverable clickable">
                   <span className="big-text padded">
@@ -42,6 +44,18 @@ export default function Home(props) {
               <Link href="?tool=template-generator">
                 <div className="column padded elevated rounded outlined hoverable clickable">
                   <span className="big-text padded">Template Generator</span>
+                  <hr className="wide" />
+                  <div className="row">
+                    <img
+                      src={`${basePath}/braces.svg`}
+                      style={{ height: "200px" }}
+                    ></img>
+                  </div>
+                </div>
+              </Link>
+              <Link href="?tool=sql-workflow">
+                <div className="column padded elevated rounded outlined hoverable clickable">
+                  <span className="big-text padded">SQL Generator</span>
                   <hr className="wide" />
                   <div className="row">
                     <img
