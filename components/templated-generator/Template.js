@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import H2 from "../../components/H2";
 import { downloadJSON, readJSON } from "../../hooks/useDownloadJSON";
 import TextareaAutosize from "react-textarea-autosize";
-import ErrorBoundary from "../ErrorBoundary";
+import ErrorBoundry from "../ErrorBoundry";
 const Tour = dynamic(() => import("reactour"), { ssr: false });
 
 const steps = [
@@ -258,7 +258,7 @@ const Template = function ({
   );
 };
 export default (props) => (
-  <ErrorBoundary
+  <ErrorBoundry
     CustomHandler={({ resolve }) => {
       return (
         <input
@@ -273,5 +273,5 @@ export default (props) => (
     }}
   >
     <Template {...props} />
-  </ErrorBoundary>
+  </ErrorBoundry>
 );

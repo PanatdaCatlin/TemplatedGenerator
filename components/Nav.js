@@ -11,7 +11,7 @@ function Nav({ title, home }) {
       <div className="row">
         {home && (
           <img
-            style={{ height: "100px", width: "150px" }}
+            style={{ height: "100px", width: "auto" }}
             src={`${basePath}/PNWLogo.png`}
           />
         )}
