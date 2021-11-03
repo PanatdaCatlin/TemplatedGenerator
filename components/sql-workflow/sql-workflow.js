@@ -48,7 +48,7 @@ function SQLWorkflow() {
   );
   const [city, setCity] = useState("Memphis");
   const [id, setId] = useState(1337);
-  const [template, setTemplate] = useState("");
+  const [template, setTemplate] = useState("SELECT * from Cities where name = 'Memphis' AND WHERE id = 1337;");
   const [isTourOpen, setIsTourOpen] = useState(false);
 
   return (

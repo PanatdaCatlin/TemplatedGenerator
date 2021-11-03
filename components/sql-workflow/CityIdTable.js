@@ -5,7 +5,6 @@ import ReactDataSheet from "react-datasheet";
 import "react-datasheet/lib/react-datasheet.css";
 
 const CityIdTable = ({ tableData, setTableData }) => {
-
   return (
     <div
       className="column padded elevated rounded bordered flex-start"
@@ -33,7 +32,7 @@ const CityIdTable = ({ tableData, setTableData }) => {
                   grid[row][col] = { value };
                 });
 
-                setTableData(grid);
+                setTableData([ ...grid ]);
               }}
             ></ReactDataSheet>
 
