@@ -48,7 +48,7 @@ function SQLWorkflow() {
   );
   const [city, setCity] = useState("Memphis");
   const [id, setId] = useState(1337);
-  const [template, setTemplate] = useState(`UPDATE wp_posts SET post_content = REPLACE(post_content, 'Milwaukee', 'Brookfield') WHERE ID = 601;`);
+  const [template, setTemplate] = useState(`UPDATE wp_posts SET post_content = REPLACE(post_content, 'Milwaukee', 'Memphis') WHERE ID = 1337;`);
   const [isTourOpen, setIsTourOpen] = useState(false);
 
   return (
